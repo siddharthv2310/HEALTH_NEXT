@@ -12,7 +12,7 @@ const Banner = () => {
     <p className='text-4xl font-semibold'>Book Appointment</p>
     <p className='text-4xl font-semibold mt-4'>With 100+ Trusted Doctors</p>
 
-    <button onClick={()=>{ navigate('/login'); scrollTo(0,0)}}  className='mt-8 cursor-pointer active:scale-90 bg-white text-gray-700 px-8 py-3 hover:bg-indigo-100 rounded-full'>
+    <button onClick={()=>{ navigate('/login'); scrollTo({top:0,behavior:"instant"})}}  className='mt-8 cursor-pointer active:scale-90 bg-white text-gray-700 px-8 py-3 hover:bg-indigo-100 rounded-full'>
       Create account
     </button>
   </div>
