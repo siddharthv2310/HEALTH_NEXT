@@ -1,0 +1,21 @@
+# env files
+.env
+admin/.env
+Backend/.env
+frontend/.env
+
+# node modules
+node_modules
+admin/node_modules
+Backend/node_modules
+frontend/node_modules
+
+# build files
+dist
+build
+
+# logs
+*.log
+
+# mac files
+.DS_Store
