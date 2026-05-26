@@ -15,7 +15,7 @@ const addDoctor=async(req,res)=>{
         
         
 
-        console.log({name,email,password,speciality,degree ,experience,about,fees,address},imgFile);      
+        // console.log({name,email,password,speciality,degree ,experience,about,fees,address},imgFile);      
 
         
         if(!name || !email || !password  || !speciality || !degree || !experience || !about || !fees || !address){
