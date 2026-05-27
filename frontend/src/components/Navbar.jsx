@@ -1,13 +1,21 @@
-import React, { useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { assets } from '../assets/assets'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { AppContext } from '../context/AppContext'
 
 const Navbar = () => {
   const navigate = useNavigate()
 
   const [showMenu, setShowMenu] = useState(false)
-  const [token, setToken] = useState(true)
+  const {token,setToken,userData}=useContext(AppContext)
   const [showDropdown, setShowDropdown] = useState(false) 
+
+  const logout = ()=>{
+    setShowDropdown(false);
+    setToken(false)
+    localStorage.removeItem('token');
+
+  }
 
   return (
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-gray-400">
@@ -48,7 +56,7 @@ const Navbar = () => {
       <div className="flex items-center gap-4">
 
         {/* -------- User / Button -------- */}
-        {token ? (
+        {token && userData ? (
           <div className="relative group">
 
             {/* Profile Click */}
@@ -58,7 +66,7 @@ const Navbar = () => {
             >
               <img
                 className="w-8 rounded-full"
-                src={assets.profile_pic}
+                src={userData.image}
                 alt="profile"
               />
 
@@ -102,10 +110,7 @@ const Navbar = () => {
               </p>
 
               <p
-                onClick={() => {
-                  setToken(false)
-                  setShowDropdown(false)
-                }}
+                onClick={logout }
                 className="cursor-pointer px-2 py-1 rounded hover:bg-amber-50 hover:text-black"
               >
                 Logout

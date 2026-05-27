@@ -1,32 +1,97 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import profileImg from "../assets/upload_area.png";
+import { AppContext } from "../context/AppContext";
+import { Camera } from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const MyProfile = () => {
   const [isEdit, setIsEdit] = useState(false);
 
-  const [userData, setUserData] = useState({
-    image: "https://randomuser.me/api/portraits/men/75.jpg",
-    name: "Edward Vincent",
-    email: "richardjameswap@gmail.com",
-    phone: "+1 123 456 7890",
-    address: {
-      line1:"57th Cross, Richmond ",
-      line2:"Circle, Church Road, LondonChurch"
-      },
-    gender: "Male",
-    dob: "20 July, 2024",
-  });
+  const { userData, setUserData, token, backendUrl, loadUserProfileData } = useContext(AppContext);
+  const [image, setImage] = useState(false);
+  const navigate = useNavigate();
 
-  return (
+
+  const updateUserProfileData = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('name', userData.name)
+      formData.append('phone', userData.phone)
+      formData.append('address', JSON.stringify(userData.address))
+      formData.append('gender', userData.gender)
+      formData.append('dob', userData.dob)
+
+      image && formData.append('image', image);
+
+
+      const { data } = await axios.post(backendUrl + '/api/user/update-profile', formData, { headers: { Authorization: `Bearer ${token}` } })
+
+      if (data.success) {
+        toast.success(data.message);
+        await loadUserProfileData();
+        setIsEdit(false);
+        setImage(false)
+        //navigate('/');
+      }
+      else {
+        toast.error(data.message);
+      }
+
+
+    }
+    catch (err) {
+      console.log(err);
+      toast.error(err.message);
+    }
+  }
+
+
+  return userData && (
     <div className="min-h-screen bg-gray-100 flex justify-center items-start py-10">
       <div className="bg-white w-175 p-8 rounded-xl shadow">
 
         {/* Profile Image */}
         <div className="flex items-center gap-6">
-          <img
-            src={userData.image}
-            alt=""
-            className="w-28 h-28 rounded-lg object-cover"
-          />
+
+          {
+            isEdit ? (
+              <label
+                htmlFor="image"
+                className="relative cursor-pointer"
+              >
+
+                <img
+                  src={
+                    image
+                      ? URL.createObjectURL(image)
+                      : userData.image
+                  }
+                  alt=""
+                  className="w-28 h-28 rounded-lg object-cover opacity-80 hover:opacity-100 transition"
+                />
+
+                <div className="absolute bottom-1 right-1 bg-white p-1.5 rounded-full shadow-md">
+                  <Camera size={18} />
+                </div>
+
+                <input
+                  onChange={(e) => setImage(e.target.files[0])}
+                  type="file"
+                  id="image"
+                  hidden
+                />
+
+              </label>
+            ) : (
+              <img
+                src={userData.image}
+                alt=""
+                className="w-28 h-28 rounded-lg object-cover"
+              />
+            )
+          }
 
           <div>
             {isEdit ? (
@@ -47,8 +112,8 @@ const MyProfile = () => {
               </p>
             )}
           </div>
-        </div>
 
+        </div>
         <hr className="my-6" />
 
         {/* CONTACT INFO */}
@@ -81,35 +146,35 @@ const MyProfile = () => {
             {isEdit ? (
               <div>
                 <input
-                type="text"
-                value={userData.address.line1}
-                onChange={(e) =>
-                  setUserData((prev) => ({
-                    ...prev,
-                    address:{...prev.address,line1:e.target.value}
-                  }))
-                }
-                className="border px-2 py-1 rounded"
-              />
-              <br/>
-              <input type="text" 
-              value={userData.address.line2}
-              onChange={(e) =>
-                setUserData((prev)=>({
-                  ...prev,
-                  address:{...prev.address,line2:e.target.value}
-                }))
-              }
-                className="border px-2 py-1 rounded"
-              />
+                  type="text"
+                  value={userData.address.line1}
+                  onChange={(e) =>
+                    setUserData((prev) => ({
+                      ...prev,
+                      address: { ...prev.address, line1: e.target.value }
+                    }))
+                  }
+                  className="border px-2 py-1 rounded"
+                />
+                <br />
+                <input type="text"
+                  value={userData.address.line2}
+                  onChange={(e) =>
+                    setUserData((prev) => ({
+                      ...prev,
+                      address: { ...prev.address, line2: e.target.value }
+                    }))
+                  }
+                  className="border px-2 py-1 rounded"
+                />
               </div>
-              
+
             ) : (
               <div>
                 <p className="text-gray-700">{userData.address.line1}</p>
                 <p className="text-gray-700">{userData.address.line2}</p>
               </div>
-              
+
             )}
           </div>
         </div>
@@ -140,9 +205,10 @@ const MyProfile = () => {
             )}
 
             <p>Birthday:</p>
+
             {isEdit ? (
               <input
-                type="text"
+                type="date"
                 value={userData.dob}
                 onChange={(e) =>
                   setUserData((prev) => ({
@@ -150,6 +216,7 @@ const MyProfile = () => {
                     dob: e.target.value,
                   }))
                 }
+                placeholder="YYYY-MM-DD"
                 className="border px-2 py-1 rounded"
               />
             ) : (
@@ -162,7 +229,7 @@ const MyProfile = () => {
         <div className="flex gap-4">
           {isEdit ? (
             <button
-              onClick={() => setIsEdit(false)}
+              onClick={updateUserProfileData}
               className="px-6 py-2 border border-indigo-500 text-indigo-500 rounded-full hover:bg-indigo-400 hover:text-white"
             >
               Save information
