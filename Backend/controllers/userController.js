@@ -4,6 +4,7 @@ import userModel from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
 import doctorModel from '../models/doctorModel.js'
 import {v2  as cloudinary} from 'cloudinary'
+import appointmentModel from '../models/appointmentModel.js'
 
 // api to register user
 
@@ -122,4 +123,66 @@ const updateProfile = async (req,res)=>{
     }
 }
 
-export {registerUser,loginUser,getProfile,updateProfile}
+// api for booking appointments
+
+const bookAppointment=async (req,res)=>{
+    try{
+        const userId=req.userId;
+        const {docId,slotDate,slotTime}=req.body;
+
+        const docData=await doctorModel.findById(docId).select('-password');
+
+        if(!docData.available){
+            return res.json({success:false,message:"doctor not available"});
+        }
+        
+        let slots_booked = docData.slots_booked || {};
+
+        // checking for slot availability;
+
+        if(slots_booked[slotDate]){
+            if(slots_booked[slotDate].includes(slotTime)){
+                return res.json({success:false,message:"slots not available"});
+            }
+            else{
+                slots_booked[slotDate].push(slotTime)
+            }
+        }
+        else{
+            slots_booked[slotDate]=[];
+            slots_booked[slotDate].push(slotTime);
+        }
+
+        const userData=await userModel.findById(userId).select('-password');
+
+        const docDataObj = docData.toObject();
+        delete docDataObj.slots_booked;
+
+        const appointmentData={
+            userId,
+            docId,
+            userData,
+            docData: docDataObj,
+            amount:docData.fees,
+            slotTime,
+            slotDate,
+            date:Date.now()
+        }
+
+        const newAppointment  = new appointmentModel(appointmentData);
+        await newAppointment.save();
+
+        // save new slotsData in docData
+
+        await doctorModel.findByIdAndUpdate(docId,{slots_booked})
+
+        res.json({success:true,message:'Appointment booked'})
+
+    }
+    catch(err){
+        console.log(err);
+        res.json({success:false , message:err.message})
+    }
+}
+
+export {registerUser,loginUser,getProfile,updateProfile,bookAppointment}
