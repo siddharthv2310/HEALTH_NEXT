@@ -297,7 +297,7 @@ const verifyRazorpay=async(req,res)=>{
         else{
             res.json({success:false,message:"payment failed"})
         }
-        
+        console.log(orderInfo);
     }
     catch (err) {
         console.log(err);

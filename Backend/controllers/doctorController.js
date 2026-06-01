@@ -26,5 +26,8 @@ const doctorList =async(req,res)=>{
         res.json({success:false , message:err.message})
     }
 }
+// Api for doctor login
+
+
 
 export {changeAvailibility,doctorList}

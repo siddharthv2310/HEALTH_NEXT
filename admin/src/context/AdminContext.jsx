@@ -10,6 +10,10 @@ const AdminContextProvider = (props) => {
 
     const [doctors,setDoctors]=useState([]);
 
+    const [appointments,setAppointments]=useState([]);
+    const [dashData,setDashdata] = useState(null);
+
+
     const getAllDoctors= async ()=>{
 
         try{
@@ -49,7 +53,56 @@ const AdminContextProvider = (props) => {
             }
         }
         catch(err){
-            toast.error(data.message);
+            toast.error(err.message);
+        }
+    }
+
+    const getAllAppointments= async ()=>{
+        try{
+            const {data} = await axios.get(backendUrl+'/api/admin/appointments',{headers : {aToken}});
+
+            if(data.success){
+                setAppointments(data.appointments);
+            }
+            else{
+                toast.error(data.message);
+            }
+        }
+        catch(err){
+            toast.error(err.message);
+        }
+    }
+
+    const cancelAppointment = async(appointmentId)=>{
+        try{
+            const {data} = await axios.post(backendUrl+'/api/admin/cancel-appointment',{appointmentId},{headers : {aToken}});
+
+            if(data.success){
+                toast.success(data.message)
+                getAllAppointments();
+                getDashData();
+            }
+            else{
+                toast.error(data.message);
+            }
+        }
+        catch(err){
+             toast.error(err.message);
+        }
+    }
+    const getDashData = async()=>{
+        try{
+            const {data} = await axios.get(backendUrl+'/api/admin/admin-dashboard',{headers : {aToken}});
+
+            if(data.success){
+               setDashdata(data.dashData)
+            }
+            else{
+                toast.error(data.message);
+            }
+        }
+        catch(err){
+             toast.error(err.message);
         }
     }
 
@@ -58,6 +111,8 @@ const AdminContextProvider = (props) => {
     const value = {
         aToken,setAToken,
         backendUrl, doctors,getAllDoctors,changeAvailibility,
+        appointments,setAppointments,getAllAppointments,cancelAppointment,
+        dashData,getDashData,
     };
 
     return (
