@@ -7,7 +7,7 @@ import { AppContext } from '../../context/AppContext';
 const Dashboard = () => {
   const { aToken, getDashData, cancelAppointment, dashData } = useContext(AdminContext);
 
-  const {slotDateFormat} = useContext(AppContext);
+  const { slotDateFormat } = useContext(AppContext);
 
   useEffect(() => {
     if (aToken) {
@@ -26,6 +26,18 @@ const Dashboard = () => {
 
   return (
     <div className="m-6 space-y-8 max-w-7xl mx-auto p-4 animate-fade-in">
+      {/* page header */}
+      <div className="mb-6">
+
+        <h1 className="text-3xl font-bold text-gray-800">
+          Admin Dashboard
+        </h1>
+
+        <p className="text-gray-500 mt-1">
+          Monitor doctors, appointments and overall platform activity.
+        </p>
+
+      </div>
 
       {/* --- STATS CARDS SECTION --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

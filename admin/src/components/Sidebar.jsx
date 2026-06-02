@@ -2,10 +2,12 @@ import React, { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import { AdminContext } from '../context/AdminContext'
 import { assets } from '../assets/assets_admin/assets'
+import { DoctorContext } from '../context/DoctorContext'
 
 const Sidebar = () => {
 
     const { aToken } = useContext(AdminContext)
+    const {dToken} =useContext(DoctorContext)
 
     const navLinkClass = ({ isActive }) =>
         `flex items-center gap-4 py-3.5 px-5 md:px-8 rounded-xl cursor-pointer
@@ -101,6 +103,78 @@ const Sidebar = () => {
 
                             <p className='hidden md:block font-medium text-[15px]'>
                                 Doctors List
+                            </p>
+
+                        </NavLink>
+
+                    </ul>
+
+                </div>
+            }
+
+            {
+                dToken &&
+
+                <div className='pt-6 px-3'>
+
+                    <ul className='flex flex-col gap-3'>
+
+                        {/* Dashboard */}
+                        <NavLink
+                            className={navLinkClass}
+                            to={'/doctor-dashboard'}
+                        >
+
+                            <div className='bg-blue-100 p-2 rounded-lg'>
+                                <img
+                                    className='w-5 h-5'
+                                    src={assets.home_icon}
+                                    alt=""
+                                />
+                            </div>
+
+                            <p className='hidden md:block font-medium text-[15px]'>
+                                Dashboard
+                            </p>
+
+                        </NavLink>
+
+                        {/* Appointments */}
+                        <NavLink
+                            className={navLinkClass}
+                            to={'/doctor-appointment'}
+                        >
+
+                            <div className='bg-purple-100 p-2 rounded-lg'>
+                                <img
+                                    className='w-5 h-5'
+                                    src={assets.appointment_icon}
+                                    alt=""
+                                />
+                            </div>
+
+                            <p className='hidden md:block font-medium text-[15px]'>
+                                Appointments
+                            </p>
+
+                        </NavLink>
+
+                        {/* Add Doctor */}
+                        <NavLink
+                            className={navLinkClass}
+                            to={'/doctor-profile'}
+                        >
+
+                            <div className='bg-green-100 p-2 rounded-lg'>
+                                <img
+                                    className='w-5 h-5'
+                                    src={assets.add_icon}
+                                    alt=""
+                                />
+                            </div>
+
+                            <p className='hidden md:block font-medium text-[15px]'>
+                                Profile
                             </p>
 
                         </NavLink>
