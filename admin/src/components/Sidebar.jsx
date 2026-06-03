@@ -8,6 +8,7 @@ const Sidebar = () => {
 
     const { aToken } = useContext(AdminContext)
     const {dToken} =useContext(DoctorContext)
+    const role = localStorage.getItem("role")
 
     const navLinkClass = ({ isActive }) =>
         `flex items-center gap-4 py-3.5 px-5 md:px-8 rounded-xl cursor-pointer
@@ -21,7 +22,7 @@ const Sidebar = () => {
         <div className='min-h-screen w-[250px] md:w-[280px] bg-white border-r border-gray-100 shadow-sm'>
 
             {
-                aToken &&
+                aToken && role === 'admin' && 
 
                 <div className='pt-6 px-3'>
 
@@ -113,7 +114,7 @@ const Sidebar = () => {
             }
 
             {
-                dToken &&
+                dToken && role === 'doctor' &&
 
                 <div className='pt-6 px-3'>
 

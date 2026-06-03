@@ -96,10 +96,20 @@ const Doctors = () => {
               <div className="p-3 sm:p-4">
 
                 {/* Availability */}
-                <div className="flex items-center gap-2 text-xs sm:text-sm text-green-600">
-                  <p className="w-2 h-2 bg-green-500 rounded-full"></p>
-                  <p>Available</p>
-                </div>
+
+                {
+                  item.available ?
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-green-600">
+                      <p className="w-2 h-2 bg-green-500 rounded-full"></p>
+                      <p>Available</p>
+                    </div>
+                    :
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-red-500">
+                      <p className="w-2 h-2 bg-red-500 rounded-full"></p>
+                      <p>Not Available</p>
+                    </div>
+                }
+
 
                 {/* Name */}
                 <p className="text-gray-900 text-sm sm:text-base md:text-lg font-medium mt-1">

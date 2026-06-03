@@ -7,20 +7,25 @@ import { DoctorContext } from '../context/DoctorContext'
 const Navbar = () => {
 
     const { aToken, setAToken } = useContext(AdminContext)
-    const {dToken,setDToken} = useContext(DoctorContext)
+    const { dToken, setDToken } = useContext(DoctorContext)
 
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const logout = () => {
-        if (aToken) {
-            navigate('/')
-            setAToken('')
-            localStorage.removeItem('aToken')
-        }
-        if(dToken){
-            navigate('/')
-            setDToken('')
-            localStorage.removeItem('dToken')
+
+        const role = localStorage.getItem('role');
+
+        localStorage.removeItem('aToken');
+        localStorage.removeItem('dToken');
+        localStorage.removeItem('role');
+
+        setAToken('');
+        setDToken('');
+
+        if (role === 'doctor') {
+            navigate('/doctor-login');
+        } else {
+            navigate('/admin-login');
         }
     }
 
@@ -38,13 +43,14 @@ const Navbar = () => {
                 />
 
                 {
-                    aToken 
-                    ?  <p className='hidden sm:block border border-blue-500 text-blue-600 text-xs font-semibold px-4 py-1 rounded-full bg-blue-50 shadow-sm'>
-                       Admin Panel
-                       </p>
-                   :   <p className='hidden sm:block border border-blue-500 text-blue-600 text-xs font-semibold px-4 py-1 rounded-full bg-blue-50 shadow-sm'>
-                       Doctor Panel
-                       </p>
+                    aToken && localStorage.getItem("role") === 'admin' 
+
+                        ? <p className='hidden sm:block border border-blue-500 text-blue-600 text-xs font-semibold px-4 py-1 rounded-full bg-blue-50 shadow-sm'>
+                            Admin Panel
+                        </p>
+                        : <p className='hidden sm:block border border-blue-500 text-blue-600 text-xs font-semibold px-4 py-1 rounded-full bg-blue-50 shadow-sm'>
+                            Doctor Panel
+                        </p>
                 }
 
             </div>

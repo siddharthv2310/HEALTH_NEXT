@@ -1,53 +1,138 @@
 import React, { useContext } from 'react';
-import Admlogin from './pages/Admlogin';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+
 import { AdminContext } from './context/AdminContext';
+import { DoctorContext } from './context/DoctorContext';
+
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+import AdminRoute from './components/AdminRoute';
+import DoctorRoute from './components/DoctorRoute';
+
+import AdminLogin from './pages/AdminLogin';
+import DoctorLogin from './pages/DoctorLogin';
+
 import Dashboard from './pages/admin/Dashboard';
 import AllApointments from './pages/admin/AllApointments';
 import AddDoctor from './pages/admin/AddDoctor';
 import DoctorsList from './pages/admin/DoctorsList';
-import { DoctorContext } from './context/DoctorContext';
-import DoctorDasboard from './pages/doctor/DoctorDasboard';
+
+import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import DoctorAppointment from './pages/doctor/DoctorAppointment';
 import DoctorProfile from './pages/doctor/DoctorProfile';
 
 const App = () => {
 
-  const{aToken}=useContext(AdminContext)
-  const{dToken}=useContext(DoctorContext)
-  return aToken || dToken ? (
-    <div className='bg-[#F8F9FD]'>
-      <ToastContainer/>
-      <Navbar/>
-      <div className='flex items-start'>
-        <Sidebar/>
-        <Routes>
+  const { aToken } = useContext(AdminContext);
+  const { dToken } = useContext(DoctorContext);
 
-          {/* Admin routes */}
+  const location = useLocation();
 
-          <Route path='/' element={<></> } />
-          <Route path='/admin-dashboard' element={<Dashboard/>} />
-          <Route path='/all-appointments' element={<AllApointments/>} />
-          <Route path='/add-doctor' element={<AddDoctor/>} />
-          <Route path='/doctor-list' element={<DoctorsList/>} />
+  const isAuthPage =
+    location.pathname === '/admin-login' ||
+    location.pathname === '/doctor-login';
 
-          {/* Doctor routes */}
-          <Route path='doctor-dashboard' element={<DoctorDasboard/>}/>
-          <Route path='doctor-appointment' element={<DoctorAppointment/>}/>
-          <Route path='doctor-profile' element={<DoctorProfile/>}/>
-          
-        </Routes>
-      </div>
-    </div>
-  ) : (
+  return (
     <>
-    <Admlogin/>
-    <ToastContainer/>
+      <ToastContainer />
+
+      {/* Navbar only after login */}
+      {!isAuthPage && (aToken || dToken) && <Navbar />}
+
+      <div
+        className={
+          !isAuthPage && (aToken || dToken)
+            ? 'flex items-start bg-[#F8F9FD] min-h-screen'
+            : ''
+        }
+      >
+        {/* Sidebar only after login */}
+        {!isAuthPage && (aToken || dToken) && <Sidebar />}
+
+        <div className="flex-1">
+
+          <Routes>
+
+            {/* Default Route */}
+            <Route path="/" element={<Navigate to="/admin-login" />} />
+
+            {/* Login Routes */}
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/doctor-login" element={<DoctorLogin />} />
+
+            {/* Admin Protected Routes */}
+            <Route
+              path="/admin-dashboard"
+              element={
+                <AdminRoute>
+                  <Dashboard />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/all-appointments"
+              element={
+                <AdminRoute>
+                  <AllApointments />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/add-doctor"
+              element={
+                <AdminRoute>
+                  <AddDoctor />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/doctor-list"
+              element={
+                <AdminRoute>
+                  <DoctorsList />
+                </AdminRoute>
+              }
+            />
+
+            {/* Doctor Protected Routes */}
+            <Route
+              path="/doctor-dashboard"
+              element={
+                <DoctorRoute>
+                  <DoctorDashboard />
+                </DoctorRoute>
+              }
+            />
+
+            <Route
+              path="/doctor-appointment"
+              element={
+                <DoctorRoute>
+                  <DoctorAppointment />
+                </DoctorRoute>
+              }
+            />
+
+            <Route
+              path="/doctor-profile"
+              element={
+                <DoctorRoute>
+                  <DoctorProfile />
+                </DoctorRoute>
+              }
+            />
+
+          </Routes>
+
+        </div>
+      </div>
     </>
-  )
+  );
 };
 
 export default App;
