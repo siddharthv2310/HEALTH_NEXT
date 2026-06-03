@@ -131,13 +131,24 @@ const Dashboard = () => {
 
                     ) : (
 
-                      <button
-                        onClick={() => cancelAppointment(item._id)}
-                        className='px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-300'
-                      >
-                        Pending
-                      </button>
+                      // <button
+                      //   onClick={() => cancelAppointment(item._id)}
+                      //   className='px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-300'
+                      // >
+                      //   Pending
+                      // </button>
+                      <div className='flex gap-4'>
+                        <button
+                          onClick={() => cancelAppointment(item._id)}
+                          className="px-3 py-1 rounded-lg bg-red-100 text-red-600 font-semibold hover:bg-red-300 hover:text-white transition"
+                        >
+                          ❌
+                        </button>
 
+                        <span className='px-3 py-2 rounded-full bg-blue-100 text-blue-600 text-xs font-semibold'>
+                          Pending
+                        </span>
+                      </div>
                     )
                   }
 

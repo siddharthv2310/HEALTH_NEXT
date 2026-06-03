@@ -153,5 +153,9 @@ const doctorDashboard = async(req,res)=>{
         res.json({success:false , message:e.message})
     }
 }
+// api to get the doctor profile 
+
+
+// api to edit the doctor profile
 
 export {changeAvailibility,doctorList,loginDoctor,appointmentsDoctor,appointmentCompleted,appointmentCancel,doctorDashboard}
