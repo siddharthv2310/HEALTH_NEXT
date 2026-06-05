@@ -58,7 +58,7 @@ const Navbar = () => {
             {/* Right Side */}
             <button
                 onClick={logout}
-                className='bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium px-8 py-2.5 rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300'
+                className='bg-linear-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium px-8 py-2.5 rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300'
             >
                 Logout
             </button>

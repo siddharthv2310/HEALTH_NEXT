@@ -204,27 +204,50 @@ const MyAppointments = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col justify-center gap-4 min-w-[200px]">
-                    {item.payment ? (
-                      <button className="bg-green-500 text-white py-3 rounded-xl font-semibold cursor-default">
-                        Paid
-                      </button>
-                    ) : (
-                      <button onClick={() => appointmentRazorpay(item._id)} className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold">
-                        Pay Now
-                      </button>
-                    )}
+                 <div className="flex flex-col justify-center gap-4 min-w-[200px]">
 
-                    <button
-                      onClick={() => {
-                        setSelectedAppointment(item._id);
-                        setShowModal(true);
-                      }}
-                      className="border border-red-400 text-red-500 hover:bg-red-500 hover:text-white py-3 rounded-xl font-semibold"
-                    >
-                      Cancel Appointment
-                    </button>
-                  </div>
+  {item.isCompleted ? (
+
+    <button
+      disabled
+      className="bg-blue-500 text-white py-3 rounded-xl font-semibold cursor-default"
+    >
+      Completed
+    </button>
+
+  ) : item.payment ? (
+
+    <button
+      disabled
+      className="bg-green-500 text-white py-3 rounded-xl font-semibold cursor-default"
+    >
+      Paid
+    </button>
+
+  ) : (
+
+    <>
+      <button
+        onClick={() => appointmentRazorpay(item._id)}
+        className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold"
+      >
+        Pay Now
+      </button>
+
+      <button
+        onClick={() => {
+          setSelectedAppointment(item._id);
+          setShowModal(true);
+        }}
+        className="border border-red-400 text-red-500 hover:bg-red-500 hover:text-white py-3 rounded-xl font-semibold"
+      >
+        Cancel Appointment
+      </button>
+    </>
+
+  )}
+
+</div>
                 </div>
               ))
             )}

@@ -19,7 +19,7 @@ const Sidebar = () => {
 
     return (
 
-        <div className='min-h-screen w-[250px] md:w-[280px] bg-white border-r border-gray-100 shadow-sm'>
+        <div className='min-h-screen w-62.5 md:w-70 bg-white border-r border-gray-100 shadow-sm'>
 
             {
                 aToken && role === 'admin' && 

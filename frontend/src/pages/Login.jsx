@@ -103,7 +103,7 @@ const Login = () => {
         </div>
 
         {/* Password */}
-        <div className="mb-6">
+        <div className="mb-1">
           <p className="text-sm text-gray-600 mb-1">Password</p>
           <input
             type="password"
@@ -112,6 +112,10 @@ const Login = () => {
             className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-400"
             required
           />
+        </div>
+
+        <div>
+          <button onClick={() => navigate('/forgot-password')} className=" text-sm mt-0 pt-0 text-blue-500 mb-6 cursor-pointer navigate"> forget password</button>
         </div>
 
         {/* Button */}
