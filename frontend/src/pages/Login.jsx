@@ -114,14 +114,17 @@ const Login = () => {
           />
         </div>
 
-        <div>
-          <button onClick={() => navigate('/forgot-password')} className=" text-sm mt-0 pt-0 text-blue-500 mb-6 cursor-pointer navigate"> forget password</button>
-        </div>
+         {
+          state=="Login" &&
+          <div>
+          <button onClick={() => navigate('/forgot-password')} className=" text-sm mt-0 pt-0 text-blue-500  cursor-pointer navigate"> forget password</button>
+          </div>
+         }
 
         {/* Button */}
         <button
           type="submit"
-          className="w-full cursor-pointer bg-indigo-500 hover:bg-indigo-600 transition duration-300 text-white py-2 rounded-md"
+          className="mt-6 w-full cursor-pointer bg-indigo-500 hover:bg-indigo-600 transition duration-300 text-white py-2 rounded-md"
         >
           {state === "Sign Up" ? "Create Account" : "Login"}
         </button>

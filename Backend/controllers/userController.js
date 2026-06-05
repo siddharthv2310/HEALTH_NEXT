@@ -6,6 +6,7 @@ import doctorModel from '../models/doctorModel.js'
 import { v2 as cloudinary } from 'cloudinary'
 import appointmentModel from '../models/appointmentModel.js'
 import razorpay from 'razorpay'
+import sendEmail from '../utils/sendEmail.js'
 // import { validateWebhookSignature } from 'razorpay'
 // api to register user
 
@@ -275,7 +276,7 @@ const paymentRazorpay = async (req, res) => {
         }
 
         //creation of an order
-        
+
         const order = await razorpayInstance.orders.create(options)
 
         res.json({ success: true, order })
@@ -286,16 +287,16 @@ const paymentRazorpay = async (req, res) => {
     }
 }
 //api to verify payment 
-const verifyRazorpay=async(req,res)=>{
-    try{
-        const {razorpay_order_id}=req.body;
+const verifyRazorpay = async (req, res) => {
+    try {
+        const { razorpay_order_id } = req.body;
         const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
-        if(orderInfo.status == 'paid'){
-            await appointmentModel.findByIdAndUpdate(orderInfo.receipt,{payment:true});
-            res.json({success:true,message:"payment successful"})
+        if (orderInfo.status == 'paid') {
+            await appointmentModel.findByIdAndUpdate(orderInfo.receipt, { payment: true });
+            res.json({ success: true, message: "payment successful" })
         }
-        else{
-            res.json({success:false,message:"payment failed"})
+        else {
+            res.json({ success: false, message: "payment failed" })
         }
         console.log(orderInfo);
     }
@@ -304,5 +305,143 @@ const verifyRazorpay=async(req,res)=>{
         res.json({ success: false, message: err.message })
     }
 }
+// api for sending Reser OTP
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointments, paymentRazorpay,verifyRazorpay}
+const sendResetOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.json({ success: false, message: "Email is required" });
+        }
+
+        const data = await userModel.findOne({ email });
+
+        if (!data) {
+            return res.json({ success: false, message: "user not found" });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // temporary
+        console.log("Generated OTP:", otp);
+
+        data.resetOtp = otp;
+        data.resetOtpExpireAt = Date.now() + 2 * 60 * 1000;
+
+        await data.save();
+
+        await sendEmail(
+            email,
+            "password reset otp",
+            `
+            <h2>Password Reset Request</h2>
+            <p>Your OTP is:</p>
+            <h1>${otp}</h1>
+            <p>This OTP will expire in 2 minutes.</p>
+
+            `
+        )
+
+        return res.json({ success: true, message: "OTP generated successfully" });
+
+    }
+    catch (err) {
+        console.log(err);
+        res.json({ success: false, message: err.message })
+    }
+}
+// api for  verify otp 
+
+const verifyOtp=async(req,res)=>{
+    try{
+        const {email,otp} = req.body;
+
+        if (!email || !otp) {
+            return res.json({ success: false, message: "Email and otp are required" });
+        }
+
+        const data = await userModel.findOne({email});
+
+        if(!data){
+            return res.json({success:false,messgae : "user not found"});
+        }
+
+
+        if(otp !== data.resetOtp){
+            return res.json({success:false,message:"Invalid OTP"})
+        }
+
+        if(data.resetOtpExpireAt < Date.now()){
+            return res.json({success:false,message : "OTP expired"})
+        }
+
+        res.json({success:true , message:"OTP verified successfully"})
+
+    }
+    catch (err) {
+        console.log(err);
+        res.json({ success: false, message: err.message })
+    }
+}
+
+// api for reseting password
+
+const ResetPassword = async(req,res) => {
+    try{
+        const{email,otp,newpassword} =req.body;
+
+        if (!email || !otp || !newpassword) {
+            return res.json({
+                success: false,
+                message: "Missing Details"
+            });
+        }
+
+        const data = await userModel.findOne({ email });
+
+        if (!data) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+         if (data.resetOtp !== otp) {
+            return res.json({
+                success: false,
+                message: "Invalid OTP"
+            });
+        }
+
+        if (data.resetOtpExpireAt < Date.now()) {
+            return res.json({
+                success: false,
+                message: "OTP Expired"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(newpassword,10);
+
+        data.password=hashedPassword
+
+        data.resetOtp="";
+        data.resetOtpExpireAt=0;
+
+        await data.save();
+
+        return res.json({
+            success: true,
+            message: "Password Reset Successfully"
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.json({ success: false, message: err.message })
+    }
+}
+
+export {
+    registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointments,
+    paymentRazorpay, verifyRazorpay, sendResetOtp,verifyOtp,ResetPassword,
+}
