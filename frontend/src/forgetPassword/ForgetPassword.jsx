@@ -1,15 +1,35 @@
-import React, { useState } from "react";
-import { use } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-
+  const {sendOtp} = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/verify-reset-otp')
+
+    if(!email.trim()){
+  toast.error("Please enter your email");
+  return;
+}
+
+    const data = await sendOtp(email);
+
+    if(data.success){
+     toast.success(data.message);
+     localStorage.setItem("resetEmail",email);
+     localStorage.setItem("otpExpireAt",data.expireAt);
+
+     navigate('/verify-reset-otp');
+    }
+
+    else{
+       toast.error(data.message)
+    }
+    
   };
 
   return (

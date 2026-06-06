@@ -323,15 +323,10 @@ const sendResetOtp = async (req, res) => {
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        // temporary
-        console.log("Generated OTP:", otp);
+        
 
-        data.resetOtp = otp;
-        data.resetOtpExpireAt = Date.now() + 2 * 60 * 1000;
-
-        await data.save();
-
-        await sendEmail(
+        // it should be await  
+        sendEmail(
             email,
             "password reset otp",
             `
@@ -343,7 +338,17 @@ const sendResetOtp = async (req, res) => {
             `
         )
 
-        return res.json({ success: true, message: "OTP generated successfully" });
+        const hashedOtp = await bcrypt.hash(otp, 10);
+
+        data.resetOtp = hashedOtp;
+
+        data.resetOtpExpireAt = Date.now() + 1 * 60 * 1000;
+
+        data.isResetVerified = false;
+
+        await data.save();
+
+        return res.json({ success: true, message: "OTP generated successfully",expireAt : data.resetOtpExpireAt });
 
     }
     catch (err) {
@@ -364,17 +369,22 @@ const verifyOtp=async(req,res)=>{
         const data = await userModel.findOne({email});
 
         if(!data){
-            return res.json({success:false,messgae : "user not found"});
+            return res.json({success:false,message : "user not found"});
         }
 
+       
+        const isOtpValid = await bcrypt.compare(otp,data.resetOtp);
 
-        if(otp !== data.resetOtp){
+        if(!isOtpValid){
             return res.json({success:false,message:"Invalid OTP"})
         }
 
         if(data.resetOtpExpireAt < Date.now()){
             return res.json({success:false,message : "OTP expired"})
         }
+
+        data.isResetVerified = true;
+        await data.save();
 
         res.json({success:true , message:"OTP verified successfully"})
 
@@ -388,10 +398,11 @@ const verifyOtp=async(req,res)=>{
 // api for reseting password
 
 const ResetPassword = async(req,res) => {
+    console.log("ResetPassword controller hit");
     try{
-        const{email,otp,newpassword} =req.body;
+        const{email,newpassword} =req.body;
 
-        if (!email || !otp || !newpassword) {
+        if (!email || !newpassword) {
             return res.json({
                 success: false,
                 message: "Missing Details"
@@ -407,10 +418,11 @@ const ResetPassword = async(req,res) => {
             });
         }
 
-         if (data.resetOtp !== otp) {
+
+         if (!data.isResetVerified) {
             return res.json({
                 success: false,
-                message: "Invalid OTP"
+                message: "verify OTP first"
             });
         }
 
@@ -427,6 +439,7 @@ const ResetPassword = async(req,res) => {
 
         data.resetOtp="";
         data.resetOtpExpireAt=0;
+        data.isResetVerified=false;
 
         await data.save();
 

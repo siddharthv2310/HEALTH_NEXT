@@ -1,19 +1,59 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  const handleSubmit = (e) => {
+  const { resetPassword } = useContext(AuthContext);
+  // const location = useLocation();
+  const navigate = useNavigate();
+
+  const email = localStorage.getItem('resetEmail')
+  
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      return alert("Passwords do not match");
+      setPasswordError("Password do not match");
+      return;
+    }
+    setPasswordError("");
+
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
     }
 
-    console.log(password);
+//     console.log("Email:", email);
+// console.log("OTP:", otp);
+// console.log("Password:", password);
+
+    const data = await resetPassword(email, password);
+
+    if (data.success) {
+      localStorage.removeItem('resetEmail');
+      localStorage.removeItem('otpExpireAt')
+      toast.success(data.message);
+      navigate('/login');
+    }
+    else {
+      toast.error(data.message);
+    }
+
   };
+
+  useEffect(() => {
+
+    if (!email ) {
+      navigate("/forgot-password");
+    }
+
+  }, [email, navigate]);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-[#f5f5f5]">
@@ -53,10 +93,23 @@ const ResetPassword = () => {
             type="password"
             className="w-full border border-gray-400 rounded-xl px-4 py-3 text-md outline-none focus:border-indigo-500"
             value={confirmPassword}
-            onChange={(e) =>
-              setConfirmPassword(e.target.value)
+            onChange={(e) => {
+              const value = e.target.value;
+              setConfirmPassword(value);
+              if (password === value) {
+                setPasswordError("");
+              }
+              else {
+                setPasswordError("Passwords do not match");
+              }
+            }
             }
           />
+          {passwordError && (
+            <p className="text-red-500 text-sm mt-1">
+              {passwordError}
+            </p>
+          )}
         </div>
 
         <button

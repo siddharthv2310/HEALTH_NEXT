@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
     resetOtpExpireAt: {
         type: Number,
         default: 0
+    },
+    isResetVerified: {
+        type: Boolean,
+        default: false
     }
 })
 
