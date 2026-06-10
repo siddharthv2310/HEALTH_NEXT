@@ -6,12 +6,14 @@ import connectcloudinary from './config/cloudinary.js';
 import adminRouter from './routes/adminRoute.js';
 import doctorRouter from './routes/doctorRoute.js';
 import userRouter from './routes/userRoute.js';
+import createAdmin from './config/createAdmin.js';
 
 //app config
 const app=express();
 const port = process.env.PORT || 4000
 connectDB()
 connectcloudinary();
+createAdmin();
 
 //middlewares
              

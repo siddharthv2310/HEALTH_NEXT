@@ -24,7 +24,7 @@ const TopDoctors = () => {
 
         {doctors.slice(0, 10).map((item, index) => (
           <div
-            onClick={() => {navigate(`/appointment/${item._id}`) ; scrollTo(0,0)}}
+            onClick={() => {navigate(`/appointment/${item._id}`) ; window.scrollTo(0,0)}}
             key={index}
             className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 hover:shadow-lg transition-all duration-300 bg-white'
           >
@@ -58,7 +58,7 @@ const TopDoctors = () => {
 
               {/* Speciality */}
               <p className='text-gray-600 text-xs sm:text-sm'>
-                {item.speciality}
+                {item.speciality}c
               </p>
 
             </div>
@@ -69,7 +69,7 @@ const TopDoctors = () => {
 
       {/* Button */}
       <button
-        onClick={() => { navigate('/doctors'); scrollTo(0, 0) }}
+        onClick={() => { navigate('/doctors'); window.scrollTo(0, 0) }}
         className='cursor-pointer bg-blue-100 text-gray-700 px-8 sm:px-12 py-2.5 sm:py-3 rounded-full mt-6 hover:bg-blue-200 active:scale-95 transition'
       >
         More

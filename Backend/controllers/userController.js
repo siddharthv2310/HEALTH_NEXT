@@ -7,6 +7,9 @@ import { v2 as cloudinary } from 'cloudinary'
 import appointmentModel from '../models/appointmentModel.js'
 import razorpay from 'razorpay'
 import sendEmail from '../utils/sendEmail.js'
+import { OAuth2Client } from "google-auth-library";
+import { verifyGoogleCode } from "../services/authService.js";
+
 // import { validateWebhookSignature } from 'razorpay'
 // api to register user
 
@@ -63,6 +66,14 @@ const loginUser = async (req, res) => {
             return res.json({ success: false, message: 'user not found' });
         }
 
+        if (!user.password) {
+    return res.json({
+        success: false,
+        message: "This account was created using Google Sign-In"
+    });
+}
+
+       
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
@@ -226,7 +237,7 @@ const cancelAppointments = async (req, res) => {
 
         //verify appointmentUser
 
-        if (appointmentData.userId != userId) {
+        if (appointmentData.userId.toString() != userId) {
             return res.json({ success: false, message: "unauthorised action" });
         }
 
@@ -323,7 +334,7 @@ const sendResetOtp = async (req, res) => {
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        
+
 
         // it should be await  
         sendEmail(
@@ -348,7 +359,7 @@ const sendResetOtp = async (req, res) => {
 
         await data.save();
 
-        return res.json({ success: true, message: "OTP generated successfully",expireAt : data.resetOtpExpireAt });
+        return res.json({ success: true, message: "OTP generated successfully", expireAt: data.resetOtpExpireAt });
 
     }
     catch (err) {
@@ -358,35 +369,35 @@ const sendResetOtp = async (req, res) => {
 }
 // api for  verify otp 
 
-const verifyOtp=async(req,res)=>{
-    try{
-        const {email,otp} = req.body;
+const verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
 
         if (!email || !otp) {
             return res.json({ success: false, message: "Email and otp are required" });
         }
 
-        const data = await userModel.findOne({email});
+        const data = await userModel.findOne({ email });
 
-        if(!data){
-            return res.json({success:false,message : "user not found"});
+        if (!data) {
+            return res.json({ success: false, message: "user not found" });
         }
 
-       
-        const isOtpValid = await bcrypt.compare(otp,data.resetOtp);
 
-        if(!isOtpValid){
-            return res.json({success:false,message:"Invalid OTP"})
+        const isOtpValid = await bcrypt.compare(otp, data.resetOtp);
+
+        if (!isOtpValid) {
+            return res.json({ success: false, message: "Invalid OTP" })
         }
 
-        if(data.resetOtpExpireAt < Date.now()){
-            return res.json({success:false,message : "OTP expired"})
+        if (data.resetOtpExpireAt < Date.now()) {
+            return res.json({ success: false, message: "OTP expired" })
         }
 
         data.isResetVerified = true;
         await data.save();
 
-        res.json({success:true , message:"OTP verified successfully"})
+        res.json({ success: true, message: "OTP verified successfully" })
 
     }
     catch (err) {
@@ -397,10 +408,10 @@ const verifyOtp=async(req,res)=>{
 
 // api for reseting password
 
-const ResetPassword = async(req,res) => {
+const ResetPassword = async (req, res) => {
     console.log("ResetPassword controller hit");
-    try{
-        const{email,newpassword} =req.body;
+    try {
+        const { email, newpassword } = req.body;
 
         if (!email || !newpassword) {
             return res.json({
@@ -419,7 +430,7 @@ const ResetPassword = async(req,res) => {
         }
 
 
-         if (!data.isResetVerified) {
+        if (!data.isResetVerified) {
             return res.json({
                 success: false,
                 message: "verify OTP first"
@@ -433,13 +444,13 @@ const ResetPassword = async(req,res) => {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(newpassword,10);
+        const hashedPassword = await bcrypt.hash(newpassword, 10);
 
-        data.password=hashedPassword
+        data.password = hashedPassword
 
-        data.resetOtp="";
-        data.resetOtpExpireAt=0;
-        data.isResetVerified=false;
+        data.resetOtp = "";
+        data.resetOtpExpireAt = 0;
+        data.isResetVerified = false;
 
         await data.save();
 
@@ -453,8 +464,52 @@ const ResetPassword = async(req,res) => {
         res.json({ success: false, message: err.message })
     }
 }
+// api for google login
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const googleLogin = async (req, res) => {
+    try {
+        const { idToken } = req.body;
+
+        const ticket = await client.verifyIdToken({
+            idToken,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        const { email, name, picture } = payload;
+
+        let user = await userModel.findOne({ email });
+
+        if (!user) {
+            user = await userModel.create({
+                name,
+                email,
+                image: picture,
+                isGoogleUser: true,
+            });
+        }
+
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET
+        );
+
+        return res.json({
+            success: true,
+            token,
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
 export {
     registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointments,
-    paymentRazorpay, verifyRazorpay, sendResetOtp,verifyOtp,ResetPassword,
+    paymentRazorpay, verifyRazorpay, sendResetOtp, verifyOtp, ResetPassword, googleLogin,
 }

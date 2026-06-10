@@ -24,22 +24,8 @@ const AppContextProvider = (props) => {
         return age;
     };
 
-    const months = [
-        "",
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"
-    ];
-
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
     const slotDateFormat = (slotDate) => {
 
         const dateArray = slotDate.split(" ");

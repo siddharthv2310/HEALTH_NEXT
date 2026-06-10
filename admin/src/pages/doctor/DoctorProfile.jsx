@@ -201,12 +201,14 @@ const DoctorProfile = () => {
               <input
                 type="number"
                 value={profileData.fees || ""}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const val = e.target.value;
                   setProfileData((prev) => ({
                     ...prev,
-                    fees: e.target.value,
+                    // Ensures typing numeric characters doesn't crash calculations
+                    fees: val === '' ? '' : Number(val),
                   }))
-                }
+                }}
                 className="w-full border rounded-lg px-4 py-2"
               />
             ) : (
@@ -272,7 +274,7 @@ const DoctorProfile = () => {
 
         </div>
 
-         {/* AVAILABILITY EDIT */}
+        {/* AVAILABILITY EDIT */}
 
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
 

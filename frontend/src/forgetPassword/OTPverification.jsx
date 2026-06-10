@@ -229,7 +229,7 @@ const OTPVerification = () => {
                   }, 0);
                 }
               }}
-              className="
+              className="2
                 w-12
                 h-12
                 border

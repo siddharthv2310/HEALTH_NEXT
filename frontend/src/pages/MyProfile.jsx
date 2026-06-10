@@ -25,6 +25,7 @@ const MyProfile = () => {
 
       image && formData.append('image', image);
 
+      name
 
       const { data } = await axios.post(backendUrl + '/api/user/update-profile', formData, { headers: { Authorization: `Bearer ${token}` } })
 

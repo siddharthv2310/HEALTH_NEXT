@@ -1,152 +1,204 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
-import axios from 'axios'
+import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+// We go back to the standard component that worked with your backend
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
-
-  const {backendUrl,token,setToken} = useContext(AppContext)
-  
+  const { backendUrl, token, setToken } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [state, setState] = useState("Sign Up");
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
+  // New state to manage transition smoothly and stop the flashing cycle
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const onSubmitHandler =async (e) => {
-    e.preventDefault();
-
-    try{
-      if(state === 'Sign Up'){
-        const {data} = await axios.post(backendUrl + '/api/user/register',{name,password,email})
-
-        if(data.success){
-          localStorage.setItem('token',data.token);
-          setToken(data.token);
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      setIsLoggingIn(true); // Freeze the UI to handle transition smoothly
+      
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/google-login`,
+        {
+          idToken: credentialResponse.credential, // Uses your working backend setup
         }
-        else{
-          toast.error(data.message);
-        }
+      );
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+        // Notice: We removed navigate("/") from here! 
+        // We let the useEffect hook below handle it globally and cleanly.
+      } else {
+        setIsLoggingIn(false);
+        toast.error(data.message);
       }
-
-      else{
-
-        const {data} = await axios.post(backendUrl + '/api/user/login',{password,email})
-
-        if(data.success){
-          localStorage.setItem('token',data.token);
-          setToken(data.token);
-        }
-        else{
-          toast.error(data.message);
-        }
-      }
-
-
+    } catch (error) {
+      setIsLoggingIn(false);
+      toast.error(error.message || "Google Login Failed");
     }
-    catch(err){
-      toast.error(err.message);
-    }
-
-
   };
 
-  useEffect(()=>{
-    if(token){
-      navigate('/');
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      if (state === "Sign Up") {
+        const { data } = await axios.post(`${backendUrl}/api/user/register`, { name, email, password });
+        if (data.success) {
+          localStorage.setItem("token", data.token);
+          setToken(data.token);
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        const { data } = await axios.post(`${backendUrl}/api/user/login`, { email, password });
+        if (data.success) {
+          localStorage.setItem("token", data.token);
+          setToken(data.token);
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
-  },[token])
+  };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
+
+  // Smooth full-screen state during redirect to prevent background page flashing
+  if (isLoggingIn || token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm font-medium text-gray-500">Securing session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <form
-      onSubmit={onSubmitHandler}
-      className="min-h-[80vh] flex items-center justify-center bg-gray-100"
-    >
-      <div className="bg-white p-8 rounded-xl shadow-md w-87.5">
+    <div className="min-h-[90vh] flex items-center justify-center bg-gray-100 px-4 py-8">
+      <div className="bg-white rounded-3xl shadow-xl p-8 sm:p-12 w-full max-w-md mx-auto">
 
-        {/* Heading */}
-        <p className="text-2xl font-semibold text-gray-800">
-          {state === "Sign Up" ? "Create Account" : "Login"}
-        </p>
+        {/* HEADER SECTION */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            {state === "Sign Up" ? "Create Account" : "Welcome Back"}
+          </h1>
+          <p className="text-sm text-gray-500">
+            {state === "Sign Up"
+              ? "Create your account to book appointments quickly."
+              : "Login to manage your appointments and profile."}
+          </p>
+        </div>
 
-        <p className="text-sm text-gray-500 mt-2 mb-6">
-          Please {state === "Sign Up" ? "sign up" : "log in"} to book appointment
-        </p>
-
-        {/* Name (only for signup) */}
-        {state === "Sign Up" && (
-          <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-1">Full Name</p>
-            <input
-              type="text"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-400"
-              required
+        {/* TOP: WORKING GOOGLE LOGIN BUTTON */}
+        <div className="flex justify-center w-full mb-6">
+          <div className="w-full">
+            <GoogleLogin
+              width="380"
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                toast.error("Google Login Failed");
+              }}
             />
           </div>
-        )}
-
-        {/* Email */}
-        <div className="mb-4">
-          <p className="text-sm text-gray-600 mb-1">Email</p>
-          <input
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-400"
-            required
-          />
         </div>
 
-        {/* Password */}
-        <div className="mb-1">
-          <p className="text-sm text-gray-600 mb-1">Password</p>
-          <input
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-400"
-            required
-          />
-        </div>
-
-         {
-          state=="Login" &&
-          <div>
-          <button onClick={() => navigate('/forgot-password')} className=" text-sm mt-0 pt-0 text-blue-500  cursor-pointer navigate"> forget password</button>
-          </div>
-         }
-
-        {/* Button */}
-        <button
-          type="submit"
-          className="mt-6 w-full cursor-pointer bg-indigo-500 hover:bg-indigo-600 transition duration-300 text-white py-2 rounded-md"
-        >
-          {state === "Sign Up" ? "Create Account" : "Login"}
-        </button>
-
-        {/* Toggle */}
-        <p className="text-sm text-gray-500 mt-4 text-center">
-          {state === "Sign Up"
-            ? "Already have an account?"
-            : "create account ?"}{" "}
-          <span
-            onClick={() =>
-              setState(state === "Sign Up" ? "Login" : "Sign Up")
-            }
-            className="text-indigo-500 cursor-pointer hover:underline"
-          >
-            {state === "Sign Up" ? "Login here" : "click here"}
+        {/* MIDDLE: VISUAL DIVIDER */}
+        <div className="flex items-center my-6 w-full">
+          <div className="flex-1 border-t border-gray-200"></div>
+          <span className="px-3 text-xs font-semibold tracking-wider text-gray-400 whitespace-nowrap">
+            OR CONTINUE WITH EMAIL
           </span>
-        </p>
+          <div className="flex-1 border-t border-gray-200"></div>
+        </div>
+
+        {/* BOTTOM: MANUAL FORM */}
+        <form onSubmit={onSubmitHandler} className="w-full">
+          {state === "Sign Up" && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Enter your full name"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+              />
+            </div>
+          )}
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+            />
+          </div>
+
+          <div className={state === "Login" ? "mb-2" : "mb-6"}>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Enter your password"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+            />
+          </div>
+
+          {state === "Login" && (
+            <div className="text-right mb-6">
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:underline bg-transparent border-none cursor-pointer"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm hover:shadow active:scale-[0.99] duration-150 text-sm mb-6"
+          >
+            {state === "Sign Up" ? "Create Account" : "Login"}
+          </button>
+
+          <p className="text-center text-sm text-gray-500">
+            {state === "Sign Up" ? "Already have an account?" : "Don't have an account?"}
+            <button
+              type="button"
+              onClick={() => setState(state === "Sign Up" ? "Login" : "Sign Up")}
+              className="ml-1.5 text-indigo-600 cursor-pointer font-semibold hover:underline bg-transparent border-none"
+            >
+              {state === "Sign Up" ? "Login" : "Sign Up"}
+            </button>
+          </p>
+        </form>
+
       </div>
-    </form>
+    </div>
   );
 };
 
-
-export default Login
+export default Login;

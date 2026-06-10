@@ -22,6 +22,7 @@ import DoctorsList from './pages/admin/DoctorsList';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import DoctorAppointment from './pages/doctor/DoctorAppointment';
 import DoctorProfile from './pages/doctor/DoctorProfile';
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
 
@@ -38,20 +39,28 @@ const App = () => {
     <>
       <ToastContainer />
 
+      <ScrollToTop />
+
       {/* Navbar only after login */}
       {!isAuthPage && (aToken || dToken) && <Navbar />}
 
       <div
         className={
           !isAuthPage && (aToken || dToken)
-            ? 'flex items-start bg-[#F8F9FD] min-h-screen'
-            : ''
+            ? "flex items-start bg-[#F8F9FD] min-h-screen pt-25 pl-5"
+            : ""
         }
       >
         {/* Sidebar only after login */}
         {!isAuthPage && (aToken || dToken) && <Sidebar />}
 
-        <div className="flex-1">
+        <div
+          className={
+            !isAuthPage && (aToken || dToken)
+              ? "flex-1 ml-70"
+              : "flex-1"
+          }
+        >
 
           <Routes>
 

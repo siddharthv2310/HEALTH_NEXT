@@ -80,7 +80,7 @@ const appointmentCompleted= async(req,res)=>{
 
         const appointmentData =await appointmentModel.findById(appointmentId);
 
-        if(appointmentData && appointmentData.docId === docId){
+        if(appointmentData && appointmentData.docId.toString() === docId){
             await appointmentModel.findByIdAndUpdate(appointmentId,{isCompleted:true});
             return res.json({success:true,message:'appointment Completed'})
         }
@@ -103,7 +103,7 @@ const appointmentCancel= async(req,res)=>{
 
         const appointmentData =await appointmentModel.findById(appointmentId);
 
-        if(appointmentData && appointmentData.docId === docId){
+        if(appointmentData && appointmentData.docId.toString() === docId){
             await appointmentModel.findByIdAndUpdate(appointmentId,{cancelled:true});
             return res.json({success:true,message:'appointment cancelled'})
         }
@@ -142,7 +142,7 @@ const doctorDashboard = async(req,res)=>{
             earning,
             appointments:appointmentData.length,
             patients:patients.length,
-            latestAppointments : appointmentData.reverse().slice(0,5)
+            latestAppointments :[...appointmentData].reverse().slice(0, 5)
         }
 
         res.json({success:true,dashData});

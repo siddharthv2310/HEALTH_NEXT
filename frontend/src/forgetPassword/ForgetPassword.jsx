@@ -5,31 +5,31 @@ import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const {sendOtp} = useContext(AuthContext);
+  const { sendOtp } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!email.trim()){
-  toast.error("Please enter your email");
-  return;
-}
+    if (!email.trim()) {
+      toast.error("Please enter your email");
+      return;
+    }
 
     const data = await sendOtp(email);
 
-    if(data.success){
-     toast.success(data.message);
-     localStorage.setItem("resetEmail",email);
-     localStorage.setItem("otpExpireAt",data.expireAt);
+    if (data.success) {
+      toast.success(data.message);
+      localStorage.setItem("resetEmail", email);
+      localStorage.setItem("otpExpireAt", data.expireAt);
 
-     navigate('/verify-reset-otp');
+      navigate('/verify-reset-otp');
     }
 
-    else{
-       toast.error(data.message)
+    else {
+      toast.error(data.message)
     }
-    
+
   };
 
   return (
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
 
         <button
           type="submit"
-          className="w-full mt-10 py-4 rounded-xl bg-linear-to-r from-indigo-500 to-indigo-600 text-white text-2xl font-medium"
+          className="w-full mt-10 py-3 rounded-xl bg-linear-to-r from-indigo-500 to-indigo-600 text-white text-2xl font-medium"
         >
           Send OTP
         </button>
@@ -69,7 +69,7 @@ const ForgotPassword = () => {
           <span className="text-gray-600">
             Remember your password?
           </span>{" "}
-          <span onClick={()=> navigate('/login')} className="text-indigo-600 cursor-pointer cursor-pointer">
+          <span onClick={() => navigate('/login')} className="text-indigo-600 cursor-pointer cursor-pointer">
             Login here
           </span>
         </p>

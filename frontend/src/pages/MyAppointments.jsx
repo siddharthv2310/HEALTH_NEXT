@@ -11,8 +11,13 @@ const MyAppointments = () => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
 
-  const activeAppointments = appointments.filter((item) => !item.cancelled);
-  const cancelledAppointments = appointments.filter((item) => item.cancelled);
+  const activeAppointments = React.useMemo(() => 
+  appointments.filter((item) => !item.cancelled), [appointments]
+);
+
+const cancelledAppointments = React.useMemo(() => 
+  appointments.filter((item) => item.cancelled), [appointments]
+);
 
   const navigate = useNavigate();
 

@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        // required: false,
     },
     image: {
         type: String,
@@ -45,7 +45,11 @@ const userSchema = new mongoose.Schema({
     isResetVerified: {
         type: Boolean,
         default: false
-    }
+    },
+    isGoogleUser: {
+        type: Boolean,
+        default: false
+    },
 })
 
 const userModel = mongoose.models.user || mongoose.model('user', userSchema);

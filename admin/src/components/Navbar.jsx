@@ -31,13 +31,12 @@ const Navbar = () => {
 
     return (
 
-        <div className='flex items-center justify-between px-4 sm:px-10 py-4 border-b bg-white shadow-md sticky top-0 z-50'>
-
+        <div className='fixed top-0 left-0 right-0 flex items-center justify-between px-4 sm:px-10 py-4 border-b bg-white shadow-md z-50'>
             {/* Left Side */}
             <div className='flex items-center gap-3'>
 
                 <img
-                    className='w-32 sm:w-40 cursor-pointer hover:scale-105 transition-all duration-300'
+                    className='w-32 h-17 sm:w-40 cursor-pointer hover:scale-105 transition-all duration-300'
                     src={assets.admin_logo}
                     alt="Admin Logo"
                 />

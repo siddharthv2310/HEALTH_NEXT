@@ -87,7 +87,7 @@ const AddDoctor = () => {
     ]
 
     return (
-        <div className='w-full min-h-screen bg-[#F8F9FD] p-6'>
+        <div className='w-full min-h-screen bg-[#F8F9FD] pt-12'>
 
             <form onSubmit={onSubmitHandeler} className='max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-8'>
 

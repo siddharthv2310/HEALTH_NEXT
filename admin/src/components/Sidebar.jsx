@@ -13,14 +13,13 @@ const Sidebar = () => {
     const navLinkClass = ({ isActive }) =>
         `flex items-center gap-4 py-3.5 px-5 md:px-8 rounded-xl cursor-pointer
         ${isActive
-            ? 'bg-gradient-to-r from-blue-50 to-indigo-100 text-blue-700 shadow-md border border-blue-100'
+            ? 'bg-linear-to-r from-blue-50 to-indigo-100 text-blue-700 shadow-md border border-blue-100'
             : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
         }`
 
     return (
 
-        <div className='min-h-screen w-62.5 md:w-70 bg-white border-r border-gray-100 shadow-sm'>
-
+        <div className='fixed top-24 left-0 h-[calc(100vh-64px)] w-62.5 md:w-70 bg-white border-r border-gray-100 shadow-sm'>
             {
                 aToken && role === 'admin' && 
 
@@ -188,5 +187,6 @@ const Sidebar = () => {
         </div>
     )
 }
+
 
 export default Sidebar

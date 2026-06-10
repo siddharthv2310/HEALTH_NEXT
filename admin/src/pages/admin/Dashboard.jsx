@@ -139,8 +139,11 @@ const Dashboard = () => {
                       // </button>
                       <div className='flex gap-4'>
                         <button
-                          onClick={() => cancelAppointment(item._id)}
-                          className="px-3 py-1 rounded-lg bg-red-100 text-red-600 font-semibold hover:bg-red-300 hover:text-white transition"
+                          onClick={async () => {
+                            await cancelAppointment(item._id);
+                            getDashData(); // Instantly syncs dashboard card figures following layout modifications
+                          }}
+                          className="px-3 py-1 rounded-lg bg-red-100 text-red-600 font-semibold hover:bg-red-300 hover:text-white transition cursor-pointer"
                         >
                           ❌
                         </button>

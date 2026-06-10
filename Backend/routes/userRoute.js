@@ -1,5 +1,5 @@
 import express from 'express'
-import { bookAppointment, cancelAppointments, getProfile, listAppointment, loginUser, paymentRazorpay, registerUser, ResetPassword, sendResetOtp, updateProfile, verifyOtp, verifyRazorpay } from '../controllers/userController.js'
+import { bookAppointment, cancelAppointments, getProfile, googleLogin, listAppointment, loginUser, paymentRazorpay, registerUser, ResetPassword, sendResetOtp, updateProfile, verifyOtp, verifyRazorpay } from '../controllers/userController.js'
 import authUser from '../middlewares/authUser.js';
 import upload from '../middlewares/multer.js';
 
@@ -18,6 +18,7 @@ userRouter.post('/verifyRazorpay',authUser,verifyRazorpay)
 userRouter.post('/send-reset-otp',sendResetOtp);
 userRouter.post('/verify-otp',verifyOtp);
 userRouter.post('/reset-password',ResetPassword);
+userRouter.post("/google-login", googleLogin);
 
 
 

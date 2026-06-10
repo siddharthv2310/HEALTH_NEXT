@@ -44,7 +44,7 @@ const DoctorLogin = () => {
     }
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 px-4'>
+       <div className='min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-emerald-100 px-4'>
 
             <form
                 onSubmit={onSubmitHandler}
