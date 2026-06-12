@@ -16,33 +16,57 @@ const DoctorProfile = () => {
   const { currency } = useContext(AppContext);
 
   const [isEdit, setIsEdit] = useState(false);
+  const [image, setImage] = useState(false);
 
   const updateProfile = async () => {
     try {
-      const updateData = {
-        address: profileData.address,
-        fees: Number(profileData.fees),
-        available: profileData.available
+
+      const formData = new FormData();
+
+      formData.append("fees", Number(profileData.fees));
+      formData.append("available", profileData.available);
+
+      formData.append(
+        "address",
+        JSON.stringify(profileData.address)
+      );
+
+      if (image) {
+        formData.append("image", image);
       }
 
-      const { data } = await axios.post(backendUrl + '/api/doctor/update-profile', updateData, { headers: { Authorization: `Bearer ${dToken}` } })
+      const { data } = await axios.post(
+        backendUrl + "/api/doctor/update-profile",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${dToken}`,
+          },
+        }
+      );
 
       if (data.success) {
+
         toast.success(data.message);
-        setIsEdit(false)
+
+        setIsEdit(false);
+
+        setImage(false);
+
         getProfileData();
-      }
-      else {
+
+      } else {
         toast.error(data.message);
       }
 
-    }
-    catch (err) {
-      console.log(err);
-      toast.error(err.message);
-    }
+    } catch (err) {
 
-  }
+      console.log(err);
+
+      toast.error(err.response?.data?.message || err.message);
+
+    }
+  };
 
   const toggleAvailability = async () => {
     try {
@@ -119,11 +143,37 @@ const DoctorProfile = () => {
           <div className="flex flex-col md:flex-row gap-8">
 
             <div className="flex justify-center">
-              <img
-                src={profileData.image}
-                alt=""
-                className="w-52 h-52 rounded-2xl object-cover"
-              />
+              {
+                isEdit ? (
+                  <label htmlFor="doc-image" className="cursor-pointer relative">
+
+                    <img
+                      src={image ? URL.createObjectURL(image) : profileData.image}
+                      alt=""
+                      className="w-52 h-52 rounded-2xl object-cover"
+                    />
+
+                    <div className="absolute inset-0 bg-black/30 rounded-2xl flex items-center justify-center text-white font-medium">
+                      Change Photo
+                    </div>
+
+                    <input
+                      type="file"
+                      id="doc-image"
+                      hidden
+                      accept="image/*"
+                      onChange={(e) => setImage(e.target.files[0])}
+                    />
+
+                  </label>
+                ) : (
+                  <img
+                    src={profileData.image}
+                    alt=""
+                    className="w-52 h-52 rounded-2xl object-cover"
+                  />
+                )
+              }
             </div>
 
             <div className="flex-1">

@@ -14,6 +14,7 @@ const Navbar = () => {
     setShowDropdown(false);
     setToken(false)
     localStorage.removeItem('token');
+    navigate('/');
   }
 
   return (

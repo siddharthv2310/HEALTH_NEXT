@@ -11,3 +11,29 @@
 ::-webkit-scrollbar{
     @apply hidden
 }
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59,130,246,0.4);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(6,182,212,0.7);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2.5s ease-in-out infinite;
+}

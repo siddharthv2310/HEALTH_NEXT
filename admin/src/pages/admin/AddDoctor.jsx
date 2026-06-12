@@ -6,6 +6,8 @@ import axios from 'axios'
 
 const AddDoctor = () => {
 
+    const [onsubmit,setOnsubmit] = useState(false);
+
 
     const [docImg, setDocImg] = useState(false)
     const [name, setName] = useState('')
@@ -23,6 +25,10 @@ const AddDoctor = () => {
 
     const onSubmitHandeler= async (e)=>{
       e.preventDefault();
+      if (onsubmit) return;
+      
+      setOnsubmit(true);
+
       try{
         if(!docImg){
           return toast.error("image not selected");
@@ -67,6 +73,9 @@ const AddDoctor = () => {
       }
       catch(err){
         toast.error(err.message);
+      }
+      finally{
+        setOnsubmit(false);
       }
     }
 
@@ -275,7 +284,8 @@ const AddDoctor = () => {
                 {/* Button */}
                 <button
                   type='submit'
-                  className='mt-8 bg-blue-600 text-white px-10 py-3 rounded-full font-medium hover:scale-105 transition-all duration-300'>
+                  disabled = {onsubmit}
+                  className={`  ${onsubmit ? "cursor-pointer mt-8 bg-gray-400 text-black px-10 py-3 rounded-full font-medium hover:scale-105 transition-all duration-300 " : "cursor-pointer mt-8  bg-blue-600 text-white px-10 py-3 rounded-full font-medium hover:scale-105 transition-all duration-300"}`}>
                     Add doctor
                 </button>
 

@@ -14,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import ResetPassword from './forgetPassword/ResetPassword.jsx'
 import OTPverification from './forgetPassword/OTPverification.jsx'
 import ForgetPassword from './forgetPassword/ForgetPassword.jsx'
+import ChatBoat from './components/chatboat/GeminiChatBoat.jsx'
 
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgetPassword/>} />
 
       </Routes>
+      <ChatBoat/>
       <Footer/>
     </div>
   )

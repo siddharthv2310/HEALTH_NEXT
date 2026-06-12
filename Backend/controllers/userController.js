@@ -81,7 +81,7 @@ const loginUser = async (req, res) => {
             res.json({ success: true, token });
         }
         else {
-            res.json({ success: false, message: 'Invali credentials' });
+            res.json({ success: false, message: 'Invalid credentials' });
         }
 
     }
