@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
 import { Sparkles, Trash2 } from "lucide-react";
+import axios from "axios";
+
 
 const GeminiChatBoat = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,11 +17,14 @@ const GeminiChatBoat = () => {
     const [messages, setMessages] = useState([defaultMessage]);
     const bottomRef = useRef(null);
     const [loading, setLoading] = useState(false);
+    //const [pendingBooking, setPendingBooking] = useState(null);
 
     const sendMessage = async () => {
-        const messageText = input.trim();
+        const messageText = input.trim().toLowerCase();
+
 
         if (!messageText) return;
+
 
         const userMessage = {
             id: Date.now(),
@@ -27,27 +32,88 @@ const GeminiChatBoat = () => {
             content: messageText,
         };
 
-        setMessages((prev) => [...prev, userMessage]);
+        const updatedMessages = [...messages, userMessage];
+        setMessages(updatedMessages);
 
         setInput("");
 
         try {
             setLoading(true);
 
-            setTimeout(() => {
+            const { data } = await axios.post(
+                "http://localhost:4000/api/ai/chat",
+                {
+                    messages: updatedMessages
+                },
+                { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+            );
+
+            if (data.success) {
+
                 const aiMessage = {
                     id: Date.now() + 1,
                     role: "assistant",
-                    content: "Backend will be connected here.",
+                    content: data.aiResponse.reply,
+                    doctors: data.aiResponse.doctors || [],
+                    suggestedAction: data.aiResponse.suggestedAction || null
                 };
 
-                setMessages((prev) => [...prev, aiMessage]);
+                console.log(aiMessage);
 
-                setLoading(false);
-            }, 1000);
+                setMessages(prev => [...prev, aiMessage]);
+            }
+
         } catch (error) {
             console.log(error);
+
+            const aiMessage = {
+                id: Date.now() + 1,
+                role: "assistant",
+                content: "Something went wrong. Please try again.",
+            };
+
+            setMessages((prev) => [...prev, aiMessage]);
+        }
+        finally {
             setLoading(false);
+        }
+    };
+
+    const bookSuggestedSlot = async (
+        action
+    ) => {
+
+        try {
+
+            const { data } =
+                await axios.post(
+                    "http://localhost:4000/api/ai/confirm-booking",
+                    {
+                        pendingBooking: action
+                    },
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${localStorage.getItem("token")}`
+                        }
+                    }
+                );
+
+            const aiMessage = {
+                id: Date.now(),
+                role: "assistant",
+                content:
+                    data.aiResponse.reply
+            };
+
+            setMessages(prev => [
+                ...prev,
+                aiMessage
+            ]);
+
+        } catch (error) {
+
+            console.log(error);
         }
     };
 
@@ -67,6 +133,45 @@ const GeminiChatBoat = () => {
                 content: "Hello! I'm HealthNest AI. How can I help you today?"
             }
         ]);
+    };
+
+    const selectDoctor = async (doctorId) => {
+
+        const userMessage = {
+            id: Date.now(),
+            role: "user",
+            content: `doctor_id:${doctorId}`
+        };
+
+        const updatedMessages = [...messages, userMessage];
+
+        setMessages(updatedMessages);
+
+        try {
+
+            const { data } = await axios.post(
+                "http://localhost:4000/api/ai/chat",
+                {
+                    messages: updatedMessages
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+
+            const aiMessage = {
+                id: Date.now() + 1,
+                role: "assistant",
+                content: data.aiResponse.reply
+            };
+
+            setMessages(prev => [...prev, aiMessage]);
+
+        } catch (err) {
+            console.log(err);
+        }
     };
 
 
@@ -194,7 +299,41 @@ const GeminiChatBoat = () => {
                                         : "bg-gray-100 text-gray-800"
                                         }`}
                                 >
-                                    {message.content}
+
+                                    <div>{message.content}</div>
+
+                                    {
+                                        message.suggestedAction?.type === "book_slot" && (
+
+                                            <button
+                                                onClick={() =>
+                                                    bookSuggestedSlot(
+                                                        message.suggestedAction
+                                                    )
+                                                }
+                                                className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg"
+                                            >
+                                                Book {message.suggestedAction.slotTime}
+                                            </button>
+
+                                        )
+                                    }
+
+                                    {message.doctors?.length > 0 && (
+                                        <div className="mt-3 flex flex-col gap-2">
+                                            {message.doctors.map((doctor) => (
+                                                <button
+                                                    key={doctor.id}
+                                                    onClick={() => selectDoctor(doctor.id)}
+                                                    className="bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-left"
+                                                >
+                                                    {doctor.name} ({doctor.speciality})
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+
+
                                 </div>
                             </div>
                         ))}
