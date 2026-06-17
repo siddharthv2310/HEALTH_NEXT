@@ -2,9 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useRef } from "react";
 import { Sparkles, Trash2 } from "lucide-react";
 import axios from "axios";
+import AppointmentList from "./Appointmentlist";
+import DoctorsList from "./DoctorsList";
+import AboutDoctor from "./AboutDoctor";
+import { toast } from "react-toastify";
+import { useAppointments } from "../../context/AppointmentContext";
+
+
 
 
 const GeminiChatBoat = () => {
+
+    const backendUrl=import.meta.env.VITE_BACKEND_URL;
+    const { getUserAppointments } = useAppointments();
+
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState("");
     //   console.log("Chat Open:", isOpen);
@@ -41,7 +52,7 @@ const GeminiChatBoat = () => {
             setLoading(true);
 
             const { data } = await axios.post(
-                "http://localhost:4000/api/ai/chat",
+                backendUrl + "/api/ai/chat",
                 {
                     messages: updatedMessages
                 },
@@ -55,11 +66,10 @@ const GeminiChatBoat = () => {
                     role: "assistant",
                     content: data.aiResponse.reply,
                     doctors: data.aiResponse.doctors || [],
+                    doctor: data.aiResponse.doctor || null,
+                    appointments: data.aiResponse.appointments || [],
                     suggestedAction: data.aiResponse.suggestedAction || null
                 };
-
-                console.log(aiMessage);
-
                 setMessages(prev => [...prev, aiMessage]);
             }
 
@@ -79,6 +89,41 @@ const GeminiChatBoat = () => {
         }
     };
 
+    const handleCancel = async (appointmentId) => {
+
+        try {
+
+            const { data } = await axios.post( backendUrl  + "/api/ai/confirm-cancel", { appointmentId }, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+
+            if (data.success) {
+
+                toast.success(data.aiResponse.reply);
+
+                setMessages(prev =>
+                    prev.map(message => ({
+                        ...message,
+                        appointments: message.appointments?.map(app =>
+                            app.id === appointmentId
+                                ? {
+                                    ...app,
+                                    cancelled: true
+                                }
+                                : app
+                        )
+                    }))
+                );
+                
+                await getUserAppointments( backendUrl, localStorage.getItem("token") );
+
+            }
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+    };
+
     const bookSuggestedSlot = async (
         action
     ) => {
@@ -87,7 +132,7 @@ const GeminiChatBoat = () => {
 
             const { data } =
                 await axios.post(
-                    "http://localhost:4000/api/ai/confirm-booking",
+                    backendUrl + "/api/ai/confirm-booking",
                     {
                         pendingBooking: action
                     },
@@ -150,7 +195,7 @@ const GeminiChatBoat = () => {
         try {
 
             const { data } = await axios.post(
-                "http://localhost:4000/api/ai/chat",
+                backendUrl+"/api/ai/chat",
                 {
                     messages: updatedMessages
                 },
@@ -164,9 +209,9 @@ const GeminiChatBoat = () => {
             const aiMessage = {
                 id: Date.now() + 1,
                 role: "assistant",
-                content: data.aiResponse.reply
+                content: data.aiResponse.reply,
+                doctor: data.aiResponse.doctor || null
             };
-
             setMessages(prev => [...prev, aiMessage]);
 
         } catch (err) {
@@ -319,19 +364,12 @@ const GeminiChatBoat = () => {
                                         )
                                     }
 
-                                    {message.doctors?.length > 0 && (
-                                        <div className="mt-3 flex flex-col gap-2">
-                                            {message.doctors.map((doctor) => (
-                                                <button
-                                                    key={doctor.id}
-                                                    onClick={() => selectDoctor(doctor.id)}
-                                                    className="bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-left"
-                                                >
-                                                    {doctor.name} ({doctor.speciality})
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
+                                    <DoctorsList doctors={message.doctors} />
+
+                                    <AboutDoctor doctor={message.doctor} />
+
+                                    <AppointmentList appointments={message.appointments} handleCancel={handleCancel} />
+
 
 
                                 </div>

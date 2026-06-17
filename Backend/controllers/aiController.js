@@ -3,6 +3,7 @@ import systemPrompt from '../config/prompts/systemPrompt.js';
 import doctorModel from '../models/doctorModel.js';
 import jsonSchemaPrompt from '../config/prompts/jsonSchemaPrompt.js';
 import handleIntent from '../services/aiIntentHandeler.js';
+import appointmentModel from '../models/appointmentModel.js';
 
 // Initialize the Google Gen AI SDK with your protected environment key
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -85,15 +86,20 @@ const chatWithGemini = async (req, res) => {
         //     });
         // }
 
-   const parsedResponse = {
-    intent: "book_appointment",
-    doctorName: "rajneesh",
-    date: "20 6 2026",
-    time: "15:33"
-};
+        // console.log(parsedResponse);
+
+        const parsedResponse = {
+            intent: "symptom_consultation",
+            symptoms:"Skin itching"
+            //speciality:"deter",
+            //doctorName: "emily ",
+            // date: "22 june",
+            // time: null ,
+            // timePeriod: morning
+        };
         // Send the generated text back to your React application
 
-        const result = await handleIntent(parsedResponse , req.userId);
+        const result = await handleIntent(parsedResponse, req.userId);
         console.log(result);
         res.json(result);
 
@@ -149,4 +155,37 @@ const confirmBooking = async (req, res) => {
     }
 };
 
-export { chatWithGemini,confirmBooking };
+const confirmCancellation = async (req, res) => {
+    try {
+        const { appointmentId } = req.body;
+
+        const appointment = await appointmentModel.findById(appointmentId);
+
+        if (!appointment) {
+            return res.json({
+                success: false,
+                message: "Appointment not found."
+            });
+        }
+
+        appointment.cancelled = true;
+        await appointment.save();
+
+        return res.json({
+            success: true,
+            aiResponse: {
+                reply: "Appointment cancelled successfully."
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.json({
+            success: false,
+            message: "Something went wrong."
+        });
+    }
+};
+
+export { chatWithGemini, confirmBooking,confirmCancellation };

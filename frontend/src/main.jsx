@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import AppContextProvider from './context/AppContext'
 import AuthContextProvider from './context/AuthContext'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { AppointmentProvider } from './context/AppointmentContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   
@@ -13,7 +14,11 @@ createRoot(document.getElementById('root')).render(
 <AppContextProvider>    
 <AuthContextProvider>
 <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-<App/>
+<AppointmentProvider>
+
+    <App/>
+
+</AppointmentProvider>    
 </GoogleOAuthProvider>
 </AuthContextProvider>
 </AppContextProvider>

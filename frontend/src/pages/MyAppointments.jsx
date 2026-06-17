@@ -3,13 +3,16 @@ import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAppointments } from "../context/AppointmentContext";
 
 const MyAppointments = () => {
   const { backendUrl, token } = useContext(AppContext);
 
+  const { appointments, setAppointments , getUserAppointments } = useAppointments();
+
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [appointments, setAppointments] = useState([]);
+  // const [appointments, setAppointments] = useState([]);
 
   const activeAppointments = React.useMemo(() => 
   appointments.filter((item) => !item.cancelled), [appointments]
@@ -28,30 +31,7 @@ const cancelledAppointments = React.useMemo(() =>
     return dateArray[0] + " " + months[Number(dateArray[1]) - 1] + " " + dateArray[2];
   };
 
-  const getUserAppointments = async () => {
-    try {
-      const { data } = await axios.get(
-        backendUrl + "/api/user/appointments",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (data.success) {
-        setAppointments(
-          Array.isArray(data.appointments)
-            ? [...data.appointments].reverse()
-            : []
-        );
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error(err.message);
-    }
-  };
-
+ 
 
   const cancelAppointment = async (appointmentId) => {
     try {
@@ -67,7 +47,7 @@ const cancelledAppointments = React.useMemo(() =>
 
       if (data.success) {
         toast.success(data.message);
-        getUserAppointments();
+        getUserAppointments(backendUrl, token);
       } else {
         toast.error(data.message);
       }
@@ -90,7 +70,7 @@ const cancelledAppointments = React.useMemo(() =>
         try {
           const {data} = await axios.post(backendUrl+'/api/user/verifyRazorpay',response ,{ headers: { Authorization: `Bearer ${token}`, } })
           if(data.success){
-            getUserAppointments();
+            getUserAppointments(backendUrl, token);
             navigate('/my-appointments')
           }
         }
@@ -125,7 +105,7 @@ const cancelledAppointments = React.useMemo(() =>
 
   useEffect(() => {
     if (token) {
-      getUserAppointments();
+      getUserAppointments(backendUrl, token);
     }
   }, [token]);
 
