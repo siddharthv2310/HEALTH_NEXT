@@ -82,8 +82,12 @@ const MyAppointments = () => {
 
     }
 
-    console.log(options);
-    const rzp = new window.Razorpay(options)
+    if (!window.Razorpay) {
+      toast.error("Razorpay failed to load");
+      return;
+    }
+
+    const rzp = new window.Razorpay(options);
     rzp.open();
   }
 
@@ -107,14 +111,14 @@ const MyAppointments = () => {
     if (token) {
       getUserAppointments(backendUrl, token);
     }
-  }, [token]);
+  }, [token, backendUrl]);
 
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Heading */}
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
             My Appointments
           </h1>
           <p className="text-gray-500 mt-2">
@@ -135,6 +139,7 @@ const MyAppointments = () => {
         )}
 
         {/* Upcoming Appointments */}
+        {appointments.length !==0 &&
         <div className="mb-12">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Upcoming Appointments
@@ -149,13 +154,13 @@ const MyAppointments = () => {
               activeAppointments.map((item) => (
                 <div
                   key={item._id}
-                  className="bg-white rounded-3xl shadow-md border border-gray-100 p-6 flex flex-col md:flex-row md:justify-between gap-6 hover:shadow-xl transition-all duration-300"
+                  className="bg-white rounded-3xl shadow-md border border-gray-100 p-4 sm:p-6 flex flex-col lg:flex-row lg:justify-between gap-6"
                 >
                   <div className="flex flex-col sm:flex-row gap-5">
                     <img
                       src={item.docData.image}
-                      alt=""
-                      className="w-32 h-32 rounded-2xl object-cover bg-indigo-100"
+                      alt={item.docData.name}
+                      className="w-full sm:w-32 h-52 sm:h-32 rounded-2xl object-contain bg-indigo-100 p-2"
                     />
 
                     <div>
@@ -189,7 +194,7 @@ const MyAppointments = () => {
                     </div>
                   </div>
 
-                 <div className="flex flex-col justify-center gap-4 min-w-[200px]">
+                  <div className="flex flex-col justify-center gap-4 w-full md:w-auto md:min-w-[200px]">
 
                     {item.isCompleted ? (
 
@@ -238,8 +243,10 @@ const MyAppointments = () => {
             )}
           </div>
         </div>
+      }
 
         {/* Cancelled Appointments */}
+         {appointments.length !==0 &&
         <div>
           <h2 className="text-2xl font-semibold text-red-500 mb-6">
             Cancelled Appointments
@@ -254,13 +261,13 @@ const MyAppointments = () => {
               cancelledAppointments.map((item) => (
                 <div
                   key={item._id}
-                  className="bg-gray-50 rounded-3xl shadow-sm border border-red-200 p-6 flex flex-col md:flex-row md:justify-between gap-6 opacity-80"
+                  className="bg-gray-50 rounded-3xl shadow-sm border border-red-200 p-4 sm:p-6 flex flex-col lg:flex-row lg:justify-between gap-6 opacity-80"
                 >
                   <div className="flex flex-col sm:flex-row gap-5">
                     <img
                       src={item.docData.image}
-                      alt=""
-                      className="w-32 h-32 rounded-2xl object-cover bg-gray-200"
+                      alt={item.docData.name}
+                      className="w-full sm:w-32 h-52 sm:h-32 rounded-2xl object-contain bg-indigo-100 p-2"
                     />
 
                     <div>
@@ -294,7 +301,7 @@ const MyAppointments = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-center min-w-[200px]">
+                  <div className="flex items-center justify-center w-full md:w-auto md:min-w-[200px]">
                     <div className="bg-red-100 text-red-600 px-6 py-3 rounded-xl font-semibold">
                       Appointment Cancelled
                     </div>
@@ -304,6 +311,7 @@ const MyAppointments = () => {
             )}
           </div>
         </div>
+        }
       </div>
 
       {/* Confirmation Modal */}

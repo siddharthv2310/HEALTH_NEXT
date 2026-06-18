@@ -305,7 +305,7 @@ const GeminiChatBoat = () => {
             {isOpen && (
                 <div
                     onClick={(e) => e.stopPropagation()}
-                    className="fixed bottom-28 right-8 z-50 w-[380px] h-[550px] bg-white rounded-3xl border border-gray-200 shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right"
+                    className="fixed bottom-24 right-2 sm:right-4 md:right-8 z-50 w-[95vw] sm:w-[380px] h-[75vh] sm:h-[550px] bg-white rounded-3xl border border-gray-200 shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right"
                 >
                     {/* Header */}
                     <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 px-5 py-4 text-white">
@@ -320,7 +320,7 @@ const GeminiChatBoat = () => {
                                 </div>
 
                                 <div>
-                                    <h2 className="font-semibold">HealthNest AI</h2>
+                                    <h2 className="font-semibold text-sm sm:text-base">HealthNest AI</h2>
                                     <p className="text-xs text-blue-100">
                                         Personal Health Assistant
                                     </p>
@@ -358,7 +358,7 @@ const GeminiChatBoat = () => {
                                     }`}
                             >
                                 <div
-                                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${message.role === "user"
+                                    className={`max-w-[90%] sm:max-w-[80%] px-4 py-3 rounded-2xl text-sm ${message.role === "user"
                                         ? "bg-blue-600 text-white"
                                         : "bg-gray-100 text-gray-800"
                                         }`}
@@ -426,13 +426,13 @@ const GeminiChatBoat = () => {
                                     }
                                 }}
                                 placeholder="Ask HealthNest AI..."
-                                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                className="flex-1 px-3 sm:px-4 py-3 rounded-xl border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm"
                             />
 
                             <button
                                 onClick={sendMessage}
                                 disabled={loading}
-                                className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white flex items-center justify-center hover:scale-105 transition">
+                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white flex items-center justify-center hover:scale-105 transition">
                                 ➤
                             </button>
                         </div>
@@ -442,12 +442,12 @@ const GeminiChatBoat = () => {
 
             {/* Floating AI Button */}
             {!isOpen && (
-                <div className="fixed bottom-12 right-8 z-50 animate-float">
+                <div className="fixed bottom-6 right-3 sm:bottom-8 sm:right-5 md:bottom-12 md:right-8 z-50 animate-float">
                     <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 blur-md opacity-60 animate-glow" />
 
                     <button
                         onClick={() => setIsOpen((prev) => !prev)}
-                        className="relative overflow-hidden flex items-center gap-2 px-6 py-4 rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white font-semibold shadow-2xl hover:scale-110 transition-all duration-300 group"
+                        className="relative overflow-hidden flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white font-semibold shadow-2xl hover:scale-110 transition-all duration-300 group"
                     >
                         <span className="absolute top-0 -left-full h-full w-[50%] bg-white/20 skew-x-12 group-hover:left-[150%] transition-all duration-700" />
 

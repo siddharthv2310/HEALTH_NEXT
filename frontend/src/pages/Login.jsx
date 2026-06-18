@@ -14,14 +14,15 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   // New state to manage transition smoothly and stop the flashing cycle
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setIsLoggingIn(true); // Freeze the UI to handle transition smoothly
-      
+
       const { data } = await axios.post(
         `${backendUrl}/api/user/google-login`,
         {
@@ -46,9 +47,18 @@ const Login = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
     try {
       if (state === "Sign Up") {
-        const { data } = await axios.post(`${backendUrl}/api/user/register`, { name, email, password });
+        const { data } = await axios.post(
+          `${backendUrl}/api/user/register`,
+          { name, email, password }
+        );
+
         if (data.success) {
           localStorage.setItem("token", data.token);
           setToken(data.token);
@@ -56,7 +66,11 @@ const Login = () => {
           toast.error(data.message);
         }
       } else {
-        const { data } = await axios.post(`${backendUrl}/api/user/login`, { email, password });
+        const { data } = await axios.post(
+          `${backendUrl}/api/user/login`,
+          { email, password }
+        );
+
         if (data.success) {
           localStorage.setItem("token", data.token);
           setToken(data.token);
@@ -66,6 +80,8 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -89,11 +105,11 @@ const Login = () => {
 
   return (
     <div className="min-h-[90vh] flex items-center justify-center bg-gray-100 px-4 py-8">
-      <div className="bg-white rounded-3xl shadow-xl p-8 sm:p-12 w-full max-w-md mx-auto">
+      <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 md:p-12 w-full max-w-md mx-auto">
 
         {/* HEADER SECTION */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
             {state === "Sign Up" ? "Create Account" : "Welcome Back"}
           </h1>
           <p className="text-sm text-gray-500">
@@ -105,15 +121,12 @@ const Login = () => {
 
         {/* TOP: WORKING GOOGLE LOGIN BUTTON */}
         <div className="flex justify-center w-full mb-6">
-          <div className="w-full">
-            <GoogleLogin
-              width="380"
-              onSuccess={handleGoogleSuccess}
-              onError={() => {
-                toast.error("Google Login Failed");
-              }}
-            />
-          </div>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              toast.error("Google Login Failed");
+            }}
+          />
         </div>
 
         {/* MIDDLE: VISUAL DIVIDER */}
@@ -179,9 +192,14 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm hover:shadow active:scale-[0.99] duration-150 text-sm mb-6"
+            disabled={isSubmitting}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm hover:shadow active:scale-[0.99] duration-150 text-sm mb-6"
           >
-            {state === "Sign Up" ? "Create Account" : "Login"}
+            {isSubmitting
+              ? "Please wait..."
+              : state === "Sign Up"
+                ? "Create Account"
+                : "Login"}
           </button>
 
           <p className="text-center text-sm text-gray-500">

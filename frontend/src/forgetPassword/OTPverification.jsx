@@ -143,7 +143,7 @@ const OTPVerification = () => {
     const otpValue = otp.join("");
 
     if (otpValue.length !== 6) {
-      alert("Please enter complete OTP");
+      toast.error("Please enter complete OTP");
       return;
     }
 
@@ -195,8 +195,8 @@ const OTPVerification = () => {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-[#f8f8f8] px-4">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-md p-8">
-        <h1 className="text-3xl font-bold text-gray-800">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-md p-6 sm:p-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
           Verify OTP
         </h1>
 
@@ -204,10 +204,10 @@ const OTPVerification = () => {
           Enter the 6-digit code sent to your email
         </p>
 
-        <div
-          className="flex justify-between mt-8"
-          onPaste={handlePaste}
-        >
+       <div
+  className="flex justify-center gap-2 sm:gap-3 mt-8"
+  onPaste={handlePaste}
+>
           {otp.map((digit, index) => (
             <input
               key={index}
@@ -229,19 +229,7 @@ const OTPVerification = () => {
                   }, 0);
                 }
               }}
-              className="2
-                w-12
-                h-12
-                border
-                rounded-lg
-                text-center
-                text-xl
-                font-semibold
-                outline-none
-                focus:border-indigo-500
-                focus:ring-2
-                focus:ring-indigo-200
-              "
+              className="w-10 h-10 sm:w-12 sm:h-12 border rounded-lg text-center text-lg sm:text-xl font-semibold outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
             />
           ))}
         </div>
@@ -253,12 +241,7 @@ const OTPVerification = () => {
         <button
           disabled={timeLeft === 0}
           onClick={handleVerify}
-          className={`
-    w-full mt-6 py-3 rounded-xl text-white font-medium
-    ${timeLeft === 0
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-linear-to-r from-indigo-500 to-indigo-600"}
-  `}
+         className={`w-full mt-6 py-3 rounded-xl text-white font-medium transition-all ${timeLeft === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-indigo-500 to-indigo-600 hover:shadow-lg active:scale-[0.98]"}`}
         >
           Verify OTP
         </button>

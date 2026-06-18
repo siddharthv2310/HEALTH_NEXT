@@ -49,25 +49,25 @@ const RelatedDoctors = ({ speciality, docId }) => {
             <img
               src={item.image}
               alt=""
-              className="w-full h-48 object-cover bg-blue-50"
+              className="w-full aspect-[4/3] object-cover bg-blue-50"
             />
 
             {/* Content */}
             <div className="p-4">
 
               {/* Availability */}
-               {
-                  item.available ?
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-green-600">
-                      <p className="w-2 h-2 bg-green-500 rounded-full"></p>
-                      <p>Available</p>
-                    </div>
-                    :
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-red-500">
-                      <p className="w-2 h-2 bg-red-500 rounded-full"></p>
-                      <p>Not Available</p>
-                    </div>
-                }
+              {
+                item.available ?
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-green-600">
+                    <p className="w-2 h-2 bg-green-500 rounded-full"></p>
+                    <p>Available</p>
+                  </div>
+                  :
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-red-500">
+                    <p className="w-2 h-2 bg-red-500 rounded-full"></p>
+                    <p>Not Available</p>
+                  </div>
+              }
 
               {/* Name */}
               <p className="text-gray-900 font-medium text-lg mt-1">

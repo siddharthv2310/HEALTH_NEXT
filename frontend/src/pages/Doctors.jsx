@@ -26,7 +26,7 @@ const Doctors = () => {
     <div className="px-4 md:px-6 lg:px-10 py-10">
 
       {/* Heading */}
-      <p className="text-gray-600 text-sm sm:text-base mb-6 text-center md:text-left">
+      <p className="text-gray-600 text-sm sm:text-base mb-6 text-center lg:text-left">
         Browse through the doctors specialist.
       </p>
 
@@ -38,16 +38,11 @@ const Doctors = () => {
         Filter
       </button>
 
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
 
         {/* -------- LEFT FILTER -------- */}
         <div
-          className={`
-          ${filter ? 'flex' : 'hidden'} 
-          md:flex flex-col gap-3 
-          w-full md:w-1/4 lg:w-1/5
-          bg-white md:bg-transparent p-4 md:p-0 rounded-xl md:rounded-none shadow md:shadow-none
-        `}
+          className={`${filter ? 'flex' : 'hidden'} lg:flex flex-col gap-3 w-full lg:w-1/5 bg-white lg:bg-transparent p-4 lg:p-0 rounded-xl lg:rounded-none shadow lg:shadow-none`}
         >
 
           {[
@@ -76,20 +71,22 @@ const Doctors = () => {
         </div>
 
         {/* -------- RIGHT SIDE -------- */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+       <div className="w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
 
           {filterDoc.map((item, index) => (
             <div
-              key={index}
-              onClick={() => navigate(`/appointment/${item._id}`)}
+              key={item._id}
+             onClick={() => { navigate(`/appointment/${item._id}`)
+              window.scrollTo(0, 0)
+             }}
               className="border rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition"
             >
 
               {/* Image */}
               <img
-                className="bg-blue-50 w-full h-44 sm:h-48 md:h-52 object-cover object-top"
+                className="bg-blue-50 w-full h-36 sm:h-44 md:h-52 object-cover object-top"
                 src={item.image}
-                alt=""
+                alt={item.name}
               />
 
               {/* Content */}

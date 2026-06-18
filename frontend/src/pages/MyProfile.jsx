@@ -25,8 +25,6 @@ const MyProfile = () => {
 
       image && formData.append('image', image);
 
-      name
-
       const { data } = await axios.post(backendUrl + '/api/user/update-profile', formData, { headers: { Authorization: `Bearer ${token}` } })
 
       if (data.success) {
@@ -51,10 +49,10 @@ const MyProfile = () => {
 
   return userData && (
     <div className="min-h-screen bg-gray-100 flex justify-center items-start py-10">
-      <div className="bg-white w-175 p-8 rounded-xl shadow">
+     <div className="bg-white w-full max-w-4xl p-4 sm:p-6 md:p-8 rounded-xl shadow">
 
         {/* Profile Image */}
-        <div className="flex items-center gap-6">
+       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
 
           {
             isEdit ? (
@@ -89,7 +87,7 @@ const MyProfile = () => {
               <img
                 src={userData.image}
                 alt=""
-                className="w-28 h-28 rounded-lg object-cover"
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover"
               />
             )
           }
@@ -108,7 +106,7 @@ const MyProfile = () => {
                 className="text-2xl font-semibold border px-2 py-1 rounded"
               />
             ) : (
-              <p className="text-2xl font-semibold text-gray-800">
+              <p className="text-xl sm:text-2xl font-semibold text-gray-800 text-center sm:text-left">
                 {userData.name}
               </p>
             )}
@@ -121,7 +119,7 @@ const MyProfile = () => {
         <div className="mb-6">
           <p className="text-gray-500 text-sm mb-3">CONTACT INFORMATION</p>
 
-          <div className="grid grid-cols-[120px_1fr] gap-y-3 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-y-3 text-sm">
 
             <p>Email id:</p>
             <p className="text-indigo-600">{userData.email}</p>
@@ -137,7 +135,7 @@ const MyProfile = () => {
                     phone: e.target.value,
                   }))
                 }
-                className="border px-2 py-1 rounded"
+                className="border px-3 py-2 rounded w-full"
               />
             ) : (
               <p className="text-indigo-600">{userData.phone}</p>
@@ -155,7 +153,7 @@ const MyProfile = () => {
                       address: { ...prev.address, line1: e.target.value }
                     }))
                   }
-                  className="border px-2 py-1 rounded"
+                  className="border px-3 py-2 rounded w-full"
                 />
                 <br />
                 <input type="text"
@@ -166,7 +164,7 @@ const MyProfile = () => {
                       address: { ...prev.address, line2: e.target.value }
                     }))
                   }
-                  className="border px-2 py-1 rounded"
+                  className="border px-3 py-2 rounded w-full"
                 />
               </div>
 
@@ -184,7 +182,7 @@ const MyProfile = () => {
         <div className="mb-6">
           <p className="text-gray-500 text-sm mb-3">BASIC INFORMATION</p>
 
-          <div className="grid grid-cols-[120px_1fr] gap-y-3 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-y-3 text-sm">
 
             <p>Gender:</p>
             {isEdit ? (
@@ -196,7 +194,7 @@ const MyProfile = () => {
                     gender: e.target.value,
                   }))
                 }
-                className="border px-2 py-1 rounded"
+                className="border px-3 py-2 rounded w-full"
               >
                 <option>Male</option>
                 <option>Female</option>
@@ -218,7 +216,7 @@ const MyProfile = () => {
                   }))
                 }
                 placeholder="YYYY-MM-DD"
-                className="border px-2 py-1 rounded"
+               className="border px-3 py-2 rounded w-full"
               />
             ) : (
               <p>{userData.dob}</p>
@@ -227,7 +225,7 @@ const MyProfile = () => {
         </div>
 
         {/* BUTTONS */}
-        <div className="flex gap-4">
+        <div className="flex justify-center sm:justify-start gap-4">
           {isEdit ? (
             <button
               onClick={updateUserProfileData}
