@@ -44,19 +44,19 @@ const DoctorLogin = () => {
     }
 
     return (
-       <div className='min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-emerald-100 px-4'>
+       <div className='min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-emerald-100 px-4 py-6'>
 
             <form
                 onSubmit={onSubmitHandler}
-                className='w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-5'
+                className='w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col gap-5'
             >
 
                 <div className='text-center'>
-                    <h1 className='text-3xl font-bold text-gray-800'>
+                    <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>
                         <span className='text-green-600'>Doctor</span> Login
                     </h1>
 
-                    <p className='text-gray-500 mt-2'>
+                    <p className='text-sm sm:text-base text-gray-500 mt-2'>
                         Welcome back! Please enter your details
                     </p>
                 </div>
@@ -72,7 +72,7 @@ const DoctorLogin = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder='Enter your email'
-                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200'
+                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 text-sm sm:text-base'
                     />
                 </div>
 
@@ -87,11 +87,11 @@ const DoctorLogin = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder='Enter your password'
-                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200'
+                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 text-sm sm:text-base'
                     />
                 </div>
 
-                <button className='w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold'>
+                <button className='w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold transition-colors text-sm sm:text-base'>
                     Login
                 </button>
 

@@ -47,7 +47,7 @@ const App = () => {
       <div
         className={
           !isAuthPage && (aToken || dToken)
-            ? "flex items-start bg-[#F8F9FD] min-h-screen pt-25 pl-5"
+            ? "flex bg-[#F8F9FD] min-h-screen pt-20 md:pt-25"
             : ""
         }
       >
@@ -57,7 +57,7 @@ const App = () => {
         <div
           className={
             !isAuthPage && (aToken || dToken)
-              ? "flex-1 ml-70"
+              ? "flex-1 min-w-0 ml-16 md:ml-70 p-4 md:p-0 md:pl-5 transition-all duration-300"
               : "flex-1"
           }
         >

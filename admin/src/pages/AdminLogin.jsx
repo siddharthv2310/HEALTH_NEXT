@@ -42,19 +42,19 @@ const AdminLogin = () => {
     }
 
     return (
-        <div className='w-full min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100'>
+        <div className='w-full min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 px-4 py-6'>
 
             <form
                 onSubmit={onSubmitHandler}
-                className='w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-5'
+                className='w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col gap-5'
             >
 
                 <div className='text-center'>
-                    <h1 className='text-3xl font-bold text-gray-800'>
+                    <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>
                         <span className='text-blue-600'>Admin</span> Login
                     </h1>
 
-                    <p className='text-gray-500 mt-2'>
+                    <p className='text-sm sm:text-base text-gray-500 mt-2'>
                         Welcome back! Please enter your details
                     </p>
                 </div>
@@ -70,7 +70,7 @@ const AdminLogin = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder='Enter your email'
-                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm sm:text-base'
                     />
                 </div>
 
@@ -85,11 +85,11 @@ const AdminLogin = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder='Enter your password'
-                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+                        className='w-full mt-2 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm sm:text-base'
                     />
                 </div>
 
-                <button className='w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold'>
+                <button className='w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-colors text-sm sm:text-base'>
                     Login
                 </button>
 
@@ -98,11 +98,7 @@ const AdminLogin = () => {
                     <Link to="/doctor-login">Click Here</Link>
                 </span></p>
    
-
-
             </form>
-
-            
 
         </div>
     )

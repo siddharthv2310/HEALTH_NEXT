@@ -18,6 +18,4 @@ createRoot(document.getElementById('root')).render(
   </AdminContextProvider>
    
   </BrowserRouter>
-    
-  
 )

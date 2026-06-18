@@ -96,21 +96,21 @@ const AddDoctor = () => {
     ]
 
     return (
-        <div className='w-full min-h-screen bg-[#F8F9FD] pt-12'>
+        <div className='w-full min-h-screen bg-[#F8F9FD] pt-6 md:pt-12 px-4 sm:px-6 pb-12'>
 
-            <form onSubmit={onSubmitHandeler} className='max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-8'>
+            <form onSubmit={onSubmitHandeler} className='max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-8'>
 
                 {/* Heading */}
-                <p className='text-2xl font-semibold text-gray-800 mb-8'>
+                <p className='text-xl sm:text-2xl font-semibold text-gray-800 mb-6 md:mb-8'>
                     Add Doctor
                 </p>
 
                 {/* Upload Section */}
-                <div className='flex items-center gap-4 mb-10'>
+                <div className='flex items-center gap-4 mb-6 md:mb-10'>
 
-                    <label htmlFor="doc-img" className='cursor-pointer'>
+                    <label htmlFor="doc-img" className='cursor-pointer shrink-0'>
                         <img
-                            className='w-20 h-20 rounded-full object-cover border'
+                            className='w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border'
                             src={docImg ? URL.createObjectURL(docImg) : assets.upload_area}
                             alt=""
                         />
@@ -118,16 +118,16 @@ const AddDoctor = () => {
 
                     <input onChange={(e)=> setDocImg(e.target.files[0])} type="file" id='doc-img' hidden />
 
-                    <p className='text-gray-600 font-medium'>
+                    <p className='text-sm sm:text-base text-gray-600 font-medium'>
                         Upload doctor <br /> picture
                     </p>
                 </div>
 
                 {/* Form Fields */}
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-5 md:grid-cols-2 md:gap-8'>
 
                     {/* Left Side */}
-                    <div className='space-y-5'>
+                    <div className='space-y-4 sm:space-y-5'>
 
                         <div>
                             <p className='mb-2 text-sm font-medium text-gray-700'>
@@ -138,7 +138,7 @@ const AddDoctor = () => {
                                 onChange={(e)=> setName(e.target.value)} value={name}
                                 type="text"
                                 placeholder='Name'
-                                className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary'
+                                className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary text-sm sm:text-base'
                             />
                         </div>
 
@@ -151,7 +151,7 @@ const AddDoctor = () => {
                                 onChange={(e)=> setEmail(e.target.value)} value={email}
                                 type="email"
                                 placeholder='Your email'
-                                className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary'
+                                className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary text-sm sm:text-base'
                             />
                         </div>
 
@@ -164,7 +164,7 @@ const AddDoctor = () => {
                                 onChange={(e)=> setPassword(e.target.value)} value={password}
                                 type="password"
                                 placeholder='Password'
-                                className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary'
+                                className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary text-sm sm:text-base'
                             />
                         </div>
 
@@ -174,7 +174,7 @@ const AddDoctor = () => {
                                 Experience
                             </p>
 
-                            <select onChange={(e)=> setExperience(e.target.value)} value={experience} className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary bg-white'>
+                            <select onChange={(e)=> setExperience(e.target.value)} value={experience} className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary bg-white text-sm sm:text-base'>
 
                                 <option value="">Select experience</option>
 
@@ -198,14 +198,14 @@ const AddDoctor = () => {
                                 onChange={(e)=> setFees(e.target.value)} value={fees}
                                 type="number"
                                 placeholder='Your fees'
-                                className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary'
+                                className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary text-sm sm:text-base'
                             />
                         </div>
 
                     </div>
 
                     {/* Right Side */}
-                    <div className='space-y-5'>
+                    <div className='space-y-4 sm:space-y-5'>
 
                         {/* Speciality Dropdown */}
                         <div>
@@ -213,7 +213,7 @@ const AddDoctor = () => {
                                 Speciality
                             </p>
 
-                            <select onChange={(e)=> setSpeciality(e.target.value)} value={speciality} className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary bg-white'>
+                            <select onChange={(e)=> setSpeciality(e.target.value)} value={speciality} className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary bg-white text-sm sm:text-base'>
 
                                 <option value="">Select speciality</option>
 
@@ -237,7 +237,7 @@ const AddDoctor = () => {
                                 onChange={(e)=> setDegree(e.target.value)} value={degree}
                                 type="text"
                                 placeholder='Education'
-                                className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary'
+                                className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary text-sm sm:text-base'
                             />
                         </div>
 
@@ -250,14 +250,14 @@ const AddDoctor = () => {
                                 onChange={(e)=> setAddress1(e.target.value)} value={address1}
                                 type="text"
                                 placeholder='Address 1'
-                                className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary mb-4'
+                                className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary mb-3 text-sm sm:text-base'
                             />
 
                             <input
                                 onChange={(e)=> setAddress2(e.target.value)} value={address2}
                                 type="text"
                                 placeholder='Address 2'
-                                className='w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-primary'
+                                className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl outline-none focus:border-primary text-sm sm:text-base'
                             />
                         </div>
 
@@ -266,7 +266,7 @@ const AddDoctor = () => {
                 </div>
 
                 {/* About */}
-                <div className='mt-8'>
+                <div className='mt-6 md:mt-8'>
 
                     <p className='mb-2 text-sm font-medium text-gray-700'>
                         About me
@@ -276,18 +276,20 @@ const AddDoctor = () => {
                         onChange={(e)=> setAbout(e.target.value)} value={about}
                         rows={6}
                         placeholder='Write about yourself'
-                        className='w-full px-4 py-3 border border-gray-300 rounded-2xl outline-none focus:border-primary resize-none'
+                        className='w-full px-4 py-2.5 sm:py-3 border border-gray-300 rounded-2xl outline-none focus:border-primary resize-none text-sm sm:text-base'
                     />
 
                 </div>
 
                 {/* Button */}
-                <button
-                  type='submit'
-                  disabled = {onsubmit}
-                  className={`  ${onsubmit ? "cursor-pointer mt-8 bg-gray-400 text-black px-10 py-3 rounded-full font-medium hover:scale-105 transition-all duration-300 " : "cursor-pointer mt-8  bg-blue-600 text-white px-10 py-3 rounded-full font-medium hover:scale-105 transition-all duration-300"}`}>
-                    Add doctor
-                </button>
+                <div className='w-full flex justify-start'>
+                    <button
+                      type='submit'
+                      disabled = {onsubmit}
+                      className={`w-full sm:w-auto mt-6 md:mt-8 px-10 py-3 rounded-full font-medium hover:scale-105 transition-all duration-300 ${onsubmit ? "cursor-not-allowed bg-gray-400 text-black" : "cursor-pointer bg-blue-600 text-white"}`}>
+                        Add doctor
+                    </button>
+                </div>
 
             </form>
 

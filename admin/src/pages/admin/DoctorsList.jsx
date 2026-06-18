@@ -15,30 +15,30 @@ const DoctorsList = () => {
 
   return (
 
-    <div className='w-full min-h-screen bg-[#F8F9FD] p-6'>
+    <div className='w-full min-h-screen bg-[#F8F9FD] p-4 sm:p-6 pb-12'>
 
       {/* Heading */}
-      <div className='mb-8'>
+      <div className='mb-6 sm:mb-8'>
 
-        <h1 className='text-3xl font-bold text-gray-800'>
+        <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>
           All Doctors
         </h1>
 
-        <p className='text-gray-500 mt-1'>
+        <p className='text-sm text-gray-500 mt-1'>
           Manage all registered doctors
         </p>
 
       </div>
 
       {/* Doctors Grid */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
 
         {
           Array.isArray(doctors) && doctors.map((item, index) => (
 
             <div
               key={index}
-              className='bg-white rounded-2xl border border-[#DCE3FF] overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300'
+              className='bg-white rounded-2xl border border-[#DCE3FF] overflow-hidden hover:shadow-xl sm:hover:-translate-y-1 transition-all duration-300'
             >
 
               {/* Image Container */}
@@ -53,13 +53,13 @@ const DoctorsList = () => {
               </div>
 
               {/* Doctor Info */}
-              <div className='p-5'>
+              <div className='p-4 sm:p-5'>
 
-                <h2 className='text-xl font-semibold text-gray-800 truncate'>
+                <h2 className='text-lg sm:text-xl font-semibold text-gray-800 truncate'>
                   {item.name}
                 </h2>
 
-                <p className='text-gray-500 text-sm mt-1'>
+                <p className='text-gray-500 text-xs sm:text-sm mt-1'>
                   {item.speciality}
                 </p>
 
@@ -80,7 +80,7 @@ const DoctorsList = () => {
                   />
 
                   <p
-                    className={`font-medium ${item.available
+                    className={`font-medium text-xs sm:text-sm ${item.available
                       ? 'text-green-600'
                       : 'text-red-500'
                       }`}
@@ -97,14 +97,14 @@ const DoctorsList = () => {
                 {/* Experience & Fees */}
                 <div className='mt-4 space-y-1'>
 
-                  <p className='text-sm text-gray-600'>
+                  <p className='text-xs sm:text-sm text-gray-600'>
                     <span className='font-semibold'>
                       Experience:
                     </span>{' '}
                     {item.experience}
                   </p>
 
-                  <p className='text-sm text-gray-600'>
+                  <p className='text-xs sm:text-sm text-gray-600'>
                     <span className='font-semibold'>
                       Fees:
                     </span>{' '}
@@ -115,10 +115,10 @@ const DoctorsList = () => {
 
                 {/* Button */}
                 {/* <button
-                                    className='w-full mt-5 bg-linear-to-r from-blue-600 to-indigo-600 text-white py-2.5 rounded-xl font-medium hover:scale-[1.02] transition-all duration-300'
-                                >
-                                    View Profile
-                                </button> */}
+                className='w-full mt-5 bg-linear-to-r from-blue-600 to-indigo-600 text-white py-2.5 rounded-xl font-medium hover:scale-[1.02] transition-all duration-300'
+                >
+                View Profile
+                </button> */}
 
               </div>
 

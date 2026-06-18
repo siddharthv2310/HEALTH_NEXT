@@ -11,7 +11,7 @@ const Sidebar = () => {
     const role = localStorage.getItem("role")
 
     const navLinkClass = ({ isActive }) =>
-        `flex items-center gap-4 py-3.5 px-5 md:px-8 rounded-xl cursor-pointer
+        `flex items-center justify-center md:justify-start gap-4 py-3.5 px-3 md:px-8 rounded-xl cursor-pointer transition-all duration-200
         ${isActive
             ? 'bg-linear-to-r from-blue-50 to-indigo-100 text-blue-700 shadow-md border border-blue-100'
             : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
@@ -19,11 +19,11 @@ const Sidebar = () => {
 
     return (
 
-        <div className='fixed top-24 left-0 h-[calc(100vh-64px)] w-62.5 md:w-70 bg-white border-r border-gray-100 shadow-sm'>
+        <div className='fixed top-20 md:top-25 left-0 h-[calc(100vh-80px)] w-16 md:w-70 bg-white border-r border-gray-100 shadow-sm transition-all duration-300 z-40'>
             {
                 aToken && role === 'admin' && 
 
-                <div className='pt-6 px-3'>
+                <div className='pt-6 px-2 md:px-3'>
 
                     <ul className='flex flex-col gap-3'>
 
@@ -33,7 +33,7 @@ const Sidebar = () => {
                             to={'/admin-dashboard'}
                         >
 
-                            <div className='bg-blue-100 p-2 rounded-lg'>
+                            <div className='bg-blue-100 p-2 rounded-lg shrink-0'>
                                 <img
                                     className='w-5 h-5'
                                     src={assets.home_icon}
@@ -41,7 +41,7 @@ const Sidebar = () => {
                                 />
                             </div>
 
-                            <p className='hidden md:block font-medium text-[15px]'>
+                            <p className='hidden md:block font-medium text-[15px] whitespace-nowrap'>
                                 Dashboard
                             </p>
 
@@ -53,7 +53,7 @@ const Sidebar = () => {
                             to={'/all-appointments'}
                         >
 
-                            <div className='bg-purple-100 p-2 rounded-lg'>
+                            <div className='bg-purple-100 p-2 rounded-lg shrink-0'>
                                 <img
                                     className='w-5 h-5'
                                     src={assets.appointment_icon}
@@ -61,7 +61,7 @@ const Sidebar = () => {
                                 />
                             </div>
 
-                            <p className='hidden md:block font-medium text-[15px]'>
+                            <p className='hidden md:block font-medium text-[15px] whitespace-nowrap'>
                                 Appointments
                             </p>
 
@@ -73,7 +73,7 @@ const Sidebar = () => {
                             to={'/add-doctor'}
                         >
 
-                            <div className='bg-green-100 p-2 rounded-lg'>
+                            <div className='bg-green-100 p-2 rounded-lg shrink-0'>
                                 <img
                                     className='w-5 h-5'
                                     src={assets.add_icon}
@@ -81,7 +81,7 @@ const Sidebar = () => {
                                 />
                             </div>
 
-                            <p className='hidden md:block font-medium text-[15px]'>
+                            <p className='hidden md:block font-medium text-[15px] whitespace-nowrap'>
                                 Add Doctor
                             </p>
 
@@ -93,7 +93,7 @@ const Sidebar = () => {
                             to={'/doctor-list'}
                         >
 
-                            <div className='bg-pink-100 p-2 rounded-lg'>
+                            <div className='bg-pink-100 p-2 rounded-lg shrink-0'>
                                 <img
                                     className='w-5 h-5'
                                     src={assets.people_icon}
@@ -101,7 +101,7 @@ const Sidebar = () => {
                                 />
                             </div>
 
-                            <p className='hidden md:block font-medium text-[15px]'>
+                            <p className='hidden md:block font-medium text-[15px] whitespace-nowrap'>
                                 Doctors List
                             </p>
 
@@ -115,7 +115,7 @@ const Sidebar = () => {
             {
                 dToken && role === 'doctor' &&
 
-                <div className='pt-6 px-3'>
+                <div className='pt-6 px-2 md:px-3'>
 
                     <ul className='flex flex-col gap-3'>
 
@@ -125,7 +125,7 @@ const Sidebar = () => {
                             to={'/doctor-dashboard'}
                         >
 
-                            <div className='bg-blue-100 p-2 rounded-lg'>
+                            <div className='bg-blue-100 p-2 rounded-lg shrink-0'>
                                 <img
                                     className='w-5 h-5'
                                     src={assets.home_icon}
@@ -133,7 +133,7 @@ const Sidebar = () => {
                                 />
                             </div>
 
-                            <p className='hidden md:block font-medium text-[15px]'>
+                            <p className='hidden md:block font-medium text-[15px] whitespace-nowrap'>
                                 Dashboard
                             </p>
 
@@ -145,7 +145,7 @@ const Sidebar = () => {
                             to={'/doctor-appointment'}
                         >
 
-                            <div className='bg-purple-100 p-2 rounded-lg'>
+                            <div className='bg-purple-100 p-2 rounded-lg shrink-0'>
                                 <img
                                     className='w-5 h-5'
                                     src={assets.appointment_icon}
@@ -153,7 +153,7 @@ const Sidebar = () => {
                                 />
                             </div>
 
-                            <p className='hidden md:block font-medium text-[15px]'>
+                            <p className='hidden md:block font-medium text-[15px] whitespace-nowrap'>
                                 Appointments
                             </p>
 
@@ -165,7 +165,7 @@ const Sidebar = () => {
                             to={'/doctor-profile'}
                         >
 
-                            <div className='bg-green-100 p-2 rounded-lg'>
+                            <div className='bg-green-100 p-2 rounded-lg shrink-0'>
                                 <img
                                     className='w-5 h-5'
                                     src={assets.add_icon}
@@ -173,7 +173,7 @@ const Sidebar = () => {
                                 />
                             </div>
 
-                            <p className='hidden md:block font-medium text-[15px]'>
+                            <p className='hidden md:block font-medium text-[15px] whitespace-nowrap'>
                                 Profile
                             </p>
 
@@ -187,6 +187,5 @@ const Sidebar = () => {
         </div>
     )
 }
-
 
 export default Sidebar
