@@ -377,7 +377,10 @@ const handleIntent = async (parsedResponse, userId) => {
 
         case "symptom_consultation": {
 
-            const doctors = await doctorModel.find({ speciality: parsedResponse.speciality });
+            const doctors = await doctorModel.find({ speciality:{$regex: speciality , $options: "i"}});
+
+            console.log("this is to check what is inside the doctor")
+            console.log(doctors);
 
             return {
                 success: true,
@@ -393,7 +396,34 @@ const handleIntent = async (parsedResponse, userId) => {
                     }))
                 }
             };
+        } 
+
+        case "available_doctors" :{
+            let doctors;
+            if(speciality){
+                doctors=await doctorModel.find({speciality:{$regex: speciality , $options: "i"},available:true})
+            }
+            else{
+                doctors=await doctorModel.find({available:true});
+            }
+
+            return{
+                success:true,
+                aiResponse:{
+                    reply:`we have ${doctors.length} doctors available at this time .`,
+                    doctors: doctors.map((doc)=>({
+                         id: doc._id,
+                        name: doc.name,
+                        speciality: doc.speciality,
+                        experience: doc.experience,
+                        fees: doc.fees,
+                        available: doc.available,
+                    }))
+                }
+                
+            };
         }
+            
 
         default:
             return {

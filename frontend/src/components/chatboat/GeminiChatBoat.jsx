@@ -13,7 +13,7 @@ import { useAppointments } from "../../context/AppointmentContext";
 
 const GeminiChatBoat = () => {
 
-    const backendUrl=import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { getUserAppointments } = useAppointments();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -70,7 +70,15 @@ const GeminiChatBoat = () => {
                     appointments: data.aiResponse.appointments || [],
                     suggestedAction: data.aiResponse.suggestedAction || null
                 };
+
                 setMessages(prev => [...prev, aiMessage]);
+
+                if ( data.aiResponse.reply?.includes("Appointment booked successfully") ) {
+
+                    await getUserAppointments( backendUrl, localStorage.getItem("token") );
+
+                    toast.success(data.aiResponse.reply);
+                }
             }
 
         } catch (error) {
@@ -93,7 +101,7 @@ const GeminiChatBoat = () => {
 
         try {
 
-            const { data } = await axios.post( backendUrl  + "/api/ai/confirm-cancel", { appointmentId }, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+            const { data } = await axios.post(backendUrl + "/api/ai/confirm-cancel", { appointmentId }, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
 
             if (data.success) {
 
@@ -112,8 +120,8 @@ const GeminiChatBoat = () => {
                         )
                     }))
                 );
-                
-                await getUserAppointments( backendUrl, localStorage.getItem("token") );
+
+                await getUserAppointments(backendUrl, localStorage.getItem("token"));
 
             }
 
@@ -156,6 +164,17 @@ const GeminiChatBoat = () => {
                 aiMessage
             ]);
 
+            if (data.success) {
+
+                toast.success(data.aiResponse.reply);
+
+                await getUserAppointments(
+                    backendUrl,
+                    localStorage.getItem("token")
+                );
+
+            }
+
         } catch (error) {
 
             console.log(error);
@@ -195,7 +214,7 @@ const GeminiChatBoat = () => {
         try {
 
             const { data } = await axios.post(
-                backendUrl+"/api/ai/chat",
+                backendUrl + "/api/ai/chat",
                 {
                     messages: updatedMessages
                 },
@@ -441,7 +460,7 @@ const GeminiChatBoat = () => {
                         </span>
                     </button>
                 </div>
-            )};
+            )}
         </>
     );
 };

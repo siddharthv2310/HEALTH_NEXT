@@ -86,12 +86,11 @@ const chatWithGemini = async (req, res) => {
         //     });
         // }
 
-        // console.log(parsedResponse);
-
+       
         const parsedResponse = {
-            intent: "symptom_consultation",
-            symptoms:"Skin itching"
-            //speciality:"deter",
+            intent: "available_doctors",
+            //symptoms:"Skin itching"
+            //speciality:"dermatologist",
             //doctorName: "emily ",
             // date: "22 june",
             // time: null ,

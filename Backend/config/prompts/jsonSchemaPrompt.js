@@ -179,6 +179,35 @@ Only provide general guidance and suggest the appropriate medical speciality.
 
 Always encourage users to consult a qualified healthcare professional.
 
+5. If the user asks for available doctors, doctors currently available, available specialists, or available doctors of a particular speciality, return:
+
+{
+    "intent": "available_doctors",
+    "speciality": "<speciality if provided otherwise null>"
+}
+
+EXAMPLE :
+
+User: Show available doctors
+
+{
+    "intent": "available_doctors",
+    "speciality": null
+}
+
+User: Show available dermatologists
+
+{
+    "intent": "available_doctors",
+    "speciality": "Dermatologist"
+}
+    User: Which cardiologists are available?
+
+{
+    "intent": "available_doctors",
+    "speciality": "Cardiologist"
+}
+
 
 `;
 export default jsonSchemaPrompt;

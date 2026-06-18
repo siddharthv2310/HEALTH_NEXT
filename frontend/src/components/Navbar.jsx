@@ -1,7 +1,8 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { assets } from '../assets/assets'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
+import { useEffect } from 'react'
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -17,8 +18,23 @@ const Navbar = () => {
     navigate('/');
   }
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setShowMenu(false);
+        setShowDropdown(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-gray-400">
+    <div className="flex items-center justify-between text-sm py-4 px-4 md:px-0 mb-5 border-b border-gray-400">
 
       {/* -------- Logo -------- */}
       <img
@@ -26,7 +42,7 @@ const Navbar = () => {
           navigate('/')
           scrollTo(0, 0)
         }}
-        className="cursor-pointer w-44 h-20 hover:scale-105 transition-all duration-300"
+        className="cursor-pointer w-32 sm:w-40 md:w-44 h-auto hover:scale-105 transition-all duration-300"
         src={assets.logo}
         alt="logo"
       />
@@ -34,16 +50,16 @@ const Navbar = () => {
       {/* -------- Desktop Menu -------- */}
       <ul className="hidden md:flex items-start gap-5 font-medium">
         <NavLink to="/">
-          <li className="py-1">HOME</li>
+          <li className="py-1 hover:text-blue-600 transition-colors">HOME</li>
         </NavLink>
         <NavLink to="/doctors">
-          <li className="py-1">ALL DOCTORS</li>
+          <li className="py-1 hover:text-blue-600 transition-colors">ALL DOCTORS</li>
         </NavLink>
         <NavLink to="/about">
-          <li className="py-1">ABOUT</li>
+          <li className="py-1 hover:text-blue-600 transition-colors">ABOUT</li>
         </NavLink>
         <NavLink to="/contact">
-          <li className="py-1">CONTACT</li>
+          <li className="py-1 hover:text-blue-600 transition-colors">CONTACT</li>
         </NavLink>
       </ul>
 
@@ -68,8 +84,8 @@ const Navbar = () => {
                 className="flex items-center gap-2 cursor-pointer select-none"
               >
                 <img
-                  className="w-8 rounded-full"
-                  src={userData.image}
+                  className="w-9 h-9 rounded-full object-cover border"
+                  src={userData.image || assets.profile_pic}
                   alt="profile"
                 />
                 <img
@@ -119,20 +135,20 @@ const Navbar = () => {
           // Only show the Create Account button if there is absolutely no token present
           <button
             onClick={() => navigate('/login')}
-            className="hidden md:block bg-blue-600 text-white px-8 py-3 rounded-full 
-            cursor-pointer active:scale-95 active:bg-blue-400"
+            className="hidden md:block bg-blue-600 text-white px-6 lg:px-8 py-2.5 lg:py-3 rounded-full cursor-pointer active:scale-95 hover:bg-blue-700 transition-all"
           >
             Create Account
           </button>
         )}
 
         {/* -------- Mobile Menu Icon -------- */}
-        <img
-          onClick={() => setShowMenu(true)}
-          className="w-6 cursor-pointer md:hidden active:scale-90 transition"
-          src={assets.menu_icon}
-          alt="menu"
-        />
+        <button onClick={() => setShowMenu(true)} className="md:hidden" >
+          <img
+            src={assets.menu_icon}
+            className="w-6 cursor-pointer"
+            alt="menu"
+          />
+        </button>
 
         {/* -------- Mobile Menu -------- */}
         <div
@@ -146,7 +162,7 @@ const Navbar = () => {
 
           {/* Menu Panel */}
           <div
-            className={`absolute top-0 right-0 h-full w-3/4 max-w-xs bg-white shadow-xl 
+            className={`absolute top-0 right-0 h-full w-[85%] sm:w-[70%] max-w-sm bg-white shadow-xl 
             transform transition-transform duration-300 ${showMenu ? 'translate-x-0' : 'translate-x-full'}`}
           >
             {/* Top Bar */}
@@ -162,16 +178,16 @@ const Navbar = () => {
 
             {/* Menu Links */}
             <ul className="flex flex-col gap-5 mt-6 px-6 text-gray-700 font-medium">
-              <NavLink onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/">
+              <NavLink className="py-2 border-b border-gray-100" onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/">
                 Home
               </NavLink>
-              <NavLink onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/doctors">
+              <NavLink className="py-2 border-b border-gray-100" onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/doctors">
                 All Doctors
               </NavLink>
-              <NavLink onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/about">
+              <NavLink className="py-2 border-b border-gray-100" onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/about">
                 About
               </NavLink>
-              <NavLink onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/contact">
+              <NavLink className="py-2 border-b border-gray-100" onClick={() => { setShowMenu(false); setShowDropdown(false); }} to="/contact">
                 Contact
               </NavLink>
             </ul>

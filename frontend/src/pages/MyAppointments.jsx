@@ -8,19 +8,19 @@ import { useAppointments } from "../context/AppointmentContext";
 const MyAppointments = () => {
   const { backendUrl, token } = useContext(AppContext);
 
-  const { appointments, setAppointments , getUserAppointments } = useAppointments();
+  const { appointments, setAppointments, getUserAppointments } = useAppointments();
 
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   // const [appointments, setAppointments] = useState([]);
 
-  const activeAppointments = React.useMemo(() => 
-  appointments.filter((item) => !item.cancelled), [appointments]
-);
+  const activeAppointments = React.useMemo(() =>
+    appointments.filter((item) => !item.cancelled), [appointments]
+  );
 
-const cancelledAppointments = React.useMemo(() => 
-  appointments.filter((item) => item.cancelled), [appointments]
-);
+  const cancelledAppointments = React.useMemo(() =>
+    appointments.filter((item) => item.cancelled), [appointments]
+  );
 
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const cancelledAppointments = React.useMemo(() =>
     return dateArray[0] + " " + months[Number(dateArray[1]) - 1] + " " + dateArray[2];
   };
 
- 
+
 
   const cancelAppointment = async (appointmentId) => {
     try {
@@ -68,8 +68,8 @@ const cancelledAppointments = React.useMemo(() =>
       receipt: order.receipt,
       handler: async (response) => {
         try {
-          const {data} = await axios.post(backendUrl+'/api/user/verifyRazorpay',response ,{ headers: { Authorization: `Bearer ${token}`, } })
-          if(data.success){
+          const { data } = await axios.post(backendUrl + '/api/user/verifyRazorpay', response, { headers: { Authorization: `Bearer ${token}`, } })
+          if (data.success) {
             getUserAppointments(backendUrl, token);
             navigate('/my-appointments')
           }
@@ -191,48 +191,48 @@ const cancelledAppointments = React.useMemo(() =>
 
                  <div className="flex flex-col justify-center gap-4 min-w-[200px]">
 
-  {item.isCompleted ? (
+                    {item.isCompleted ? (
 
-    <button
-      disabled
-      className="bg-blue-500 text-white py-3 rounded-xl font-semibold cursor-default"
-    >
-      Completed
-    </button>
+                      <button
+                        disabled
+                        className="bg-blue-500 text-white py-3 rounded-xl font-semibold cursor-default"
+                      >
+                        Completed
+                      </button>
 
-  ) : item.payment ? (
+                    ) : item.payment ? (
 
-    <button
-      disabled
-      className="bg-green-500 text-white py-3 rounded-xl font-semibold cursor-default"
-    >
-      Paid
-    </button>
+                      <button
+                        disabled
+                        className="bg-green-500 text-white py-3 rounded-xl font-semibold cursor-default"
+                      >
+                        Paid
+                      </button>
 
-  ) : (
+                    ) : (
 
-    <>
-      <button
-        onClick={() => appointmentRazorpay(item._id)}
-        className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold"
-      >
-        Pay Now
-      </button>
+                      <>
+                        <button
+                          onClick={() => appointmentRazorpay(item._id)}
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold"
+                        >
+                          Pay Now
+                        </button>
 
-      <button
-        onClick={() => {
-          setSelectedAppointment(item._id);
-          setShowModal(true);
-        }}
-        className="border border-red-400 text-red-500 hover:bg-red-500 hover:text-white py-3 rounded-xl font-semibold"
-      >
-        Cancel Appointment
-      </button>
-    </>
+                        <button
+                          onClick={() => {
+                            setSelectedAppointment(item._id);
+                            setShowModal(true);
+                          }}
+                          className="border border-red-400 text-red-500 hover:bg-red-500 hover:text-white py-3 rounded-xl font-semibold"
+                        >
+                          Cancel Appointment
+                        </button>
+                      </>
 
-  )}
+                    )}
 
-</div>
+                  </div>
                 </div>
               ))
             )}
