@@ -230,14 +230,14 @@ const MyProfile = () => {
           {isEdit ? (
             <button
               onClick={updateUserProfileData}
-              className="px-6 py-2 border border-indigo-500 text-indigo-500 rounded-full hover:bg-indigo-400 hover:text-white"
+              className=" cursor-pointer px-6 py-2 border border-indigo-500 text-indigo-500 rounded-full hover:bg-indigo-400 hover:text-white"
             >
               Save information
             </button>
           ) : (
             <button
               onClick={() => setIsEdit(true)}
-              className="px-6 py-2 border border-indigo-500 text-indigo-500 rounded-full hover:bg-indigo-400 hover:text-white"
+              className="cursor-pointer px-6 py-2 border border-indigo-500 text-indigo-500 rounded-full hover:bg-indigo-400 hover:text-white"
             >
               Edit
             </button>

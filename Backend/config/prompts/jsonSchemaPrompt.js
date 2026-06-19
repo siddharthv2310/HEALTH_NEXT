@@ -12,7 +12,7 @@ Use this exact structure:
 
 {
   "reply": "string",
-  "intent": "view_doctors | view_doctor | check_availability | symptom_consultation | book_appointment | cancel_appointment | view_appointments   | clinic_hours | general_query | unknown",
+  "intent": "view_doctors | view_doctor | check_availability | symptom_consultation | book_appointment | cancel_appointment | view_appointments | general_query | unknown",
   "doctorName": "string or null",
   "speciality": "string or null",
   "date": "string or null",
