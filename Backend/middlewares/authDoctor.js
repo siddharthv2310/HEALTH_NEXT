@@ -14,8 +14,14 @@ const authDoctor = async (req, res, next) => {
             });
         }
 
-        // Expected Format:
         // Authorization: Bearer TOKEN
+
+        if (!authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid token format"
+            });
+        }
 
         const dtoken = authHeader.split(' ')[1];
 
@@ -28,13 +34,12 @@ const authDoctor = async (req, res, next) => {
         }
 
         // Verify Token
-        const decoded = jwt.verify(
-            dtoken,
-            process.env.JWT_SECRET
-        );
+
+        const decoded = jwt.verify( dtoken, process.env.JWT_SECRET );
 
         // Attach user id to request
-       req.docId = decoded.id
+        
+        req.docId = decoded.id
 
         // Move to next middleware/controller
         next();

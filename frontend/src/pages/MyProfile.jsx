@@ -17,13 +17,6 @@ const MyProfile = () => {
   const updateUserProfileData = async () => {
     try {
 
-      console.log({
-  name: userData.name,
-  phone: userData.phone,
-  address: userData.address,
-  gender: userData.gender,
-  dob: userData.dob,
-});
       const formData = new FormData();
       formData.append('name', userData.name)
       formData.append('phone', userData.phone)

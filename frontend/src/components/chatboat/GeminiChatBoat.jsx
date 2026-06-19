@@ -18,7 +18,6 @@ const GeminiChatBoat = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState("");
-    //   console.log("Chat Open:", isOpen);
     const defaultMessage = {
         id: 1,
         role: "assistant",
@@ -28,6 +27,7 @@ const GeminiChatBoat = () => {
     const [messages, setMessages] = useState([defaultMessage]);
     const bottomRef = useRef(null);
     const [loading, setLoading] = useState(false);
+    const [bookingLoading, setBookingLoading] = useState(false);
     //const [pendingBooking, setPendingBooking] = useState(null);
 
     const sendMessage = async () => {
@@ -73,9 +73,9 @@ const GeminiChatBoat = () => {
 
                 setMessages(prev => [...prev, aiMessage]);
 
-                if ( data.aiResponse.reply?.includes("Appointment booked successfully") ) {
+                if (data.aiResponse.reply?.includes("Appointment booked successfully")) {
 
-                    await getUserAppointments( backendUrl, localStorage.getItem("token") );
+                    await getUserAppointments(backendUrl, localStorage.getItem("token"));
 
                     toast.success(data.aiResponse.reply);
                 }
@@ -199,45 +199,83 @@ const GeminiChatBoat = () => {
         ]);
     };
 
-    const selectDoctor = async (doctorId) => {
-
-        const userMessage = {
-            id: Date.now(),
-            role: "user",
-            content: `doctor_id:${doctorId}`
-        };
-
-        const updatedMessages = [...messages, userMessage];
-
-        setMessages(updatedMessages);
+    const bookDoctorDirectly = async (doctorId, bookingData) => {
 
         try {
+            setBookingLoading(true);
 
-            const { data } = await axios.post(
-                backendUrl + "/api/ai/chat",
-                {
-                    messages: updatedMessages
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
+            if (!bookingData?.slotDate) {
+                toast.error("Booking date missing");
+                return;
+            }
+
+            if (!bookingData?.slotTime) {
+                toast.error("Booking time missing");
+                return;
+            }
+
+            const { data } =
+                await axios.post(
+                    backendUrl +
+                    "/api/user/book-appointment",
+                    {
+                        docId: doctorId,
+                        slotDate: bookingData.slotDate,
+                        slotTime: bookingData.slotTime
+                    },
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${localStorage.getItem("token")}`
+                        }
                     }
-                }
-            );
+                );
 
             const aiMessage = {
-                id: Date.now() + 1,
+                id: Date.now(),
                 role: "assistant",
-                content: data.aiResponse.reply,
-                doctor: data.aiResponse.doctor || null
+                content:
+                    data.success
+                        ? `Appointment booked successfully on ${bookingData.slotDate} at ${bookingData.slotTime}.`
+                        : data.message
             };
-            setMessages(prev => [...prev, aiMessage]);
 
-        } catch (err) {
-            console.log(err);
+            setMessages(prev => [
+                ...prev,
+                aiMessage
+            ]);
+
+            if (data.success) {
+
+                toast.success(
+                    "Appointment booked successfully"
+                );
+
+                setMessages(prev =>
+                    prev.map(msg => ({
+                        ...msg,
+                        doctors: []
+                    }))
+                );
+
+                await getUserAppointments(
+                    backendUrl,
+                    localStorage.getItem("token")
+                );
+            }
+
+        } catch (error) {
+
+            console.log(error);
+
+            toast.error(
+                "Unable to book appointment"
+            );
+        }
+        finally {
+            setBookingLoading(false);
         }
     };
-
 
     useEffect(() => {
         const handleEscape = (e) => {
@@ -383,7 +421,7 @@ const GeminiChatBoat = () => {
                                         )
                                     }
 
-                                    <DoctorsList doctors={message.doctors} />
+                                    <DoctorsList doctors={message.doctors} onBookDoctor={bookDoctorDirectly} bookingLoading={bookingLoading} />
 
                                     <AboutDoctor doctor={message.doctor} />
 

@@ -14,7 +14,6 @@ const handleIntent = async (parsedResponse, userId) => {
 
         case "view_doctor": {
 
-            console.log("Searching for:", doctorName);
 
             const doctors = await doctorModel.find({
                 name: {
@@ -23,12 +22,6 @@ const handleIntent = async (parsedResponse, userId) => {
                 }
             });
 
-            console.log("Doctors Found:", doctors);
-
-            console.log(
-                "Matched doctors:",
-                doctors.map(doc => doc.name)
-            );
 
             if (doctors.length === 0) {
                 return {
@@ -116,23 +109,7 @@ const handleIntent = async (parsedResponse, userId) => {
         }
 
 
-        case "book_appointment":
-
-            const doctor2 = await doctorModel.findOne({
-                name: {
-                    $regex: doctorName,
-                    $options: "i"
-                }
-            });
-
-            if (!doctor2) {
-                return {
-                    success: true,
-                    aiResponse: {
-                        reply: "Doctor not found."
-                    }
-                };
-            }
+        case "book_appointment": {
 
             const user = await userModel.findById(userId);
 
@@ -154,22 +131,11 @@ const handleIntent = async (parsedResponse, userId) => {
                 };
             }
 
-            // Generate available slots
-            const availableSlots = getAvailableSlots(doctor2);
+            let bookingDate = resolveDate(date);
 
-
-            // finding suitable booking date 
-            let bookingDate = date;
-
-            const resolvedDate = date ? resolveDate(date) : null;
-
-            if (resolvedDate) {
-                bookingDate = resolvedDate;
+            if (!bookingDate) {
+                bookingDate = date;
             }
-
-            console.log("Resolved Date:", bookingDate);
-
-            // finding suitable booking time 
 
             if (!time && !timePeriod) {
                 return {
@@ -181,49 +147,132 @@ const handleIntent = async (parsedResponse, userId) => {
                 };
             }
 
+            const doctors = await doctorModel.find({
+                name: {
+                    $regex: doctorName,
+                    $options: "i"
+                }
+            });
+
+            if (doctors.length === 0) {
+                return {
+                    success: true,
+                    aiResponse: {
+                        reply: "Doctor not found."
+                    }
+                };
+            }
+
+            // MULTIPLE DOCTORS
+            if (doctors.length > 1) {
+
+                let bookingTime = time;
+
+                if (!bookingTime && timePeriod) {
+
+                    const availableSlots =
+                        getAvailableSlots(doctors[0]);
+
+                    const suggestedSlot =
+                        resolveTime(
+                            timePeriod,
+                            availableSlots,
+                            bookingDate
+                        );
+
+                    if (!suggestedSlot) {
+
+                        return {
+                            success: true,
+                            aiResponse: {
+                                reply: `No slots available in the ${timePeriod}.`
+                            }
+                        };
+                    }
+
+                    bookingTime =
+                        suggestedSlot.slotTime;
+                }
+
+                return {
+                    success: true,
+                    aiResponse: {
+                        reply:
+                            "I found multiple doctors with that name. Please choose the doctor you want to book an appointment with.",
+
+                        doctors: doctors.map(doc => ({
+                            id: doc._id,
+                            name: doc.name,
+                            speciality: doc.speciality,
+                            experience: doc.experience,
+                            fees: doc.fees,
+                            available: doc.available,
+
+                            bookingData: {
+                                slotDate: bookingDate,
+                                slotTime: bookingTime
+                            }
+                        }))
+                    }
+                };
+            }
+
+            // SINGLE DOCTOR
+
+            const doctor = doctors[0];
+
+            const availableSlots =
+                getAvailableSlots(doctor);
+
             let bookingTime = time;
 
             if (!bookingTime && timePeriod) {
 
-                const suggestedSlot = resolveTime(timePeriod, availableSlots, bookingDate);
+                const suggestedSlot =
+                    resolveTime(
+                        timePeriod,
+                        availableSlots,
+                        bookingDate
+                    );
 
                 if (!suggestedSlot) {
 
                     return {
                         success: true,
                         aiResponse: {
-                            reply: `No slots available in the ${timePeriod}.`
+                            reply:
+                                `No slots available in the ${timePeriod}.`
                         }
                     };
                 }
 
-                bookingTime = suggestedSlot.slotTime;
+                bookingTime =
+                    suggestedSlot.slotTime;
             }
 
-
-
-
-            const isValidSlot = availableSlots.some(
-                slot =>
-                    slot.slotDate === bookingDate &&
-                    slot.slotTime === bookingTime
-            );
-
-            // Invalid slot → suggest nearest slot
-            if (!isValidSlot) {
-
-
-                const nearestSlot = findNearestSlot(
-                    bookingDate,
-                    bookingTime,
-                    availableSlots
+            const isValidSlot =
+                availableSlots.some(
+                    slot =>
+                        slot.slotDate === bookingDate &&
+                        slot.slotTime === bookingTime
                 );
 
+            if (!isValidSlot) {
+
+                const nearestSlot =
+                    findNearestSlot(
+                        bookingDate,
+                        bookingTime,
+                        availableSlots
+                    );
+
                 if (!nearestSlot) {
+
                     return {
                         success: true,
                         aiResponse: {
-                            reply: "No available slots found for that date."
+                            reply:
+                                "No available slots found for that date."
                         }
                     };
                 }
@@ -232,13 +281,12 @@ const handleIntent = async (parsedResponse, userId) => {
                     success: true,
                     aiResponse: {
                         reply:
-                            `${bookingTime} is not available.  Nearest available slot is ${nearestSlot.slotTime}.
-                            Would you like me to book it?`,
+                            `${bookingTime} is not available. Nearest available slot is ${nearestSlot.slotTime}. Would you like me to book it?`,
 
                         suggestedAction: {
                             type: "book_slot",
-                            doctorId: doctor2._id,
-                            doctorName: doctor2.name,
+                            doctorId: doctor._id,
+                            doctorName: doctor.name,
                             slotDate: nearestSlot.slotDate,
                             slotTime: nearestSlot.slotTime
                         }
@@ -246,13 +294,13 @@ const handleIntent = async (parsedResponse, userId) => {
                 };
             }
 
-            // Actual booking
             return await createAppointment(
                 user,
-                doctor2,
+                doctor,
                 bookingDate,
                 bookingTime
             );
+        }
 
 
         case "confirm_booking":
@@ -378,9 +426,6 @@ const handleIntent = async (parsedResponse, userId) => {
         case "symptom_consultation": {
 
             const doctors = await doctorModel.find({ speciality: { $regex: speciality, $options: "i" } });
-
-            console.log("this is to check what is inside the doctor")
-            console.log(doctors);
 
             return {
                 success: true,

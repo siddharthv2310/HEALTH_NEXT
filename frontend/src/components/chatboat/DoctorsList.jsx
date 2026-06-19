@@ -1,4 +1,4 @@
-const DoctorsList = ({ doctors }) => {
+const DoctorsList = ({doctors, onBookDoctor , bookingLoading}) => {
 
     if (!doctors?.length) {
         return null;
@@ -34,6 +34,25 @@ const DoctorsList = ({ doctors }) => {
                             ? "Available"
                             : "Unavailable"}
                     </p>
+
+                    <button
+                        disabled={!doctor.available || bookingLoading}
+                        onClick={() =>
+                            onBookDoctor(
+                                doctor.id,
+                                doctor.bookingData
+                            )
+                        }
+                        className={`mt-3 w-full py-2 rounded-lg text-white ${
+                            doctor.available
+                                ? "bg-blue-600 hover:bg-blue-700"
+                                : "bg-gray-400 cursor-not-allowed"
+                        }`}
+                    >
+                        {doctor.available
+                            ? bookingLoading ? "Booking..." : "Book Appointment" : "Unavailable"}
+                    </button>
+
                 </div>
 
             ))}

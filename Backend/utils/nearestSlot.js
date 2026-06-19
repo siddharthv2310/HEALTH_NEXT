@@ -1,8 +1,4 @@
-export const findNearestSlot = (
-    date,
-    time,
-    availableSlots
-) => {
+export const findNearestSlot = ( date, time, availableSlots ) => {
 
     const [hours, minutes] =
         time.split(":").map(Number);

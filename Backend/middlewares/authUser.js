@@ -16,10 +16,16 @@ const authUser = async (req, res, next) => {
             });
         }
 
-        // Expected Format:
         // Authorization: Bearer TOKEN
 
-        const token = authHeader.split(' ')[1];
+        if (!authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid token format"
+            });
+        }
+
+        const token = authHeader.split(" ")[1];
 
         // Check if token exists
         if (!token) {
@@ -36,7 +42,7 @@ const authUser = async (req, res, next) => {
         );
 
         // Attach user id to request
-       req.userId = decoded.id
+        req.userId = decoded.id
 
         // Move to next middleware/controller
         next();

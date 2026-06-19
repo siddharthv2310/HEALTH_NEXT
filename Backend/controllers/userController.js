@@ -9,6 +9,7 @@ import razorpay from 'razorpay'
 import sendEmail from '../utils/sendEmail.js'
 import { OAuth2Client } from "google-auth-library";
 import { verifyGoogleCode } from "../services/authService.js";
+import crypto from "crypto";
 
 // import { validateWebhookSignature } from 'razorpay'
 // api to register user
@@ -144,7 +145,7 @@ const updateProfile = async (req, res) => {
             });
         }
 
-        await userModel.findByIdAndUpdate(userId, { name, phone, address:parsedAddress, dob, gender })
+        await userModel.findByIdAndUpdate(userId, { name, phone, address: parsedAddress, dob, gender })
 
         if (imageFile) {
             //upload image to cloudinary
@@ -339,22 +340,57 @@ const paymentRazorpay = async (req, res) => {
 //api to verify payment 
 const verifyRazorpay = async (req, res) => {
     try {
-        const { razorpay_order_id } = req.body;
-        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
-        if (orderInfo.status == 'paid') {
-            await appointmentModel.findByIdAndUpdate(orderInfo.receipt, { payment: true });
-            res.json({ success: true, message: "payment successful" })
+
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+        const generatedSignature = crypto
+            .createHmac( "sha256", process.env.RAZORPAY_KEY_SECRET )
+            .update( razorpay_order_id + "|" + razorpay_payment_id )
+            .digest("hex");
+
+        if ( generatedSignature !== razorpay_signature ) 
+        {
+            return res.json({
+                success: false,
+                message: "Payment verification failed"
+            });
         }
-        else {
-            res.json({ success: false, message: "payment failed" })
+
+        const orderInfo = await razorpayInstance.orders.fetch( razorpay_order_id );
+
+        const appointment = await appointmentModel.findById( orderInfo.receipt );
+
+        if (!appointment) { return res.json({
+                success: false,
+                message: "Appointment not found"
+            });
         }
-        console.log(orderInfo);
-    }
-    catch (err) {
+
+        if (appointment.payment) {
+            return res.json({
+                success: true,
+                message: "Already verified"
+            });
+        }
+
+        appointment.payment = true;
+        await appointment.save();
+
+        return res.json({
+            success: true,
+            message: "Payment successful"
+        });
+
+    } catch (err) {
+
         console.log(err);
-        res.json({ success: false, message: err.message })
+
+        return res.json({
+            success: false,
+            message: err.message
+        });
     }
-}
+};
 // api for sending Reser OTP
 
 const sendResetOtp = async (req, res) => {
@@ -448,7 +484,6 @@ const verifyOtp = async (req, res) => {
 // api for reseting password
 
 const ResetPassword = async (req, res) => {
-    console.log("ResetPassword controller hit");
     try {
         const { email, newpassword } = req.body;
 

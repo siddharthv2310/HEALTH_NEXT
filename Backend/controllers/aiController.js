@@ -80,7 +80,7 @@ const chatWithGemini = async (req, res) => {
         }
         catch (error) {
 
-            console.log("JSON Parse Error:", error);
+            console.error("JSON Parse Error:", error);
 
             return res.json({
                 success: false,

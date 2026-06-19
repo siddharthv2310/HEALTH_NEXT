@@ -16,9 +16,7 @@ const OTPVerification = () => {
   // const location = useLocation();
   const email = localStorage.getItem("resetEmail");
   const [expireAt, setExpireAt] = useState(Number(localStorage.getItem("otpExpireAt")));
-  // console.log("Expire At:", expireAt);
-  // console.log("Current:", Date.now());
-
+ 
   //for countdown of otp verification;
   const [timeLeft, setTimeLeft] = useState(() => {
   const expire = Number(localStorage.getItem("otpExpireAt"));

@@ -1,12 +1,7 @@
 import appointmentModel from "../models/appointmentModel.js";
 import doctorModel from "../models/doctorModel.js";
 
-export const createAppointment = async (
-    user,
-    doctor,
-    slotDate,
-    slotTime
-) => {
+export const createAppointment = async ( user, doctor, slotDate, slotTime ) => {
 
     // Doctor availability check
     if (!doctor.available) {

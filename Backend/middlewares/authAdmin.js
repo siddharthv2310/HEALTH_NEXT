@@ -8,6 +8,9 @@ const authAdmin = async (req, res, next) => {
         if (!atoken) {
             return res.json({ success: false, message: "not Authorized! please login again" });
         }
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET missing");
+        }
         const token_decode = jwt.verify(atoken, process.env.JWT_SECRET)
 
         if (token_decode.role !== "admin") {
