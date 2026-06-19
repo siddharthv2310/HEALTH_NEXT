@@ -238,6 +238,5 @@ User: Is Dr Rajneesh available tomorrow morning?
   "timePeriod": "morning"
 }
 
-
 `;
 export default jsonSchemaPrompt;

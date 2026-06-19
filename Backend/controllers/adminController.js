@@ -16,16 +16,17 @@ const addDoctor = async (req, res) => {
 
         const imgFile = req.file;
 
-
-
-        // console.log({name,email,password,speciality,degree ,experience,about,fees,address},imgFile);      
-
-
         if (!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address) {
             return res.json({
                 success: false,
                 message: "Missing Details! fill the imformations "
             })
+        }
+        if (!imgFile) {
+            return res.json({
+                success: false,
+                message: "Doctor image is required"
+            });
         }
         // validation email content;
         if (!validator.isEmail(email)) {
@@ -42,6 +43,16 @@ const addDoctor = async (req, res) => {
                 message: "please inter strong password"
             })
         }
+
+        // checking duplicate doctor entry
+        const existingDoctor = await doctorModel.findOne({ email });
+
+if (existingDoctor) {
+    return res.json({
+        success: false,
+        message: "Doctor already exists"
+    });
+}
 
         //salt doctor password
         const salt = await bcrypt.genSalt(10);
@@ -107,7 +118,7 @@ const loginAdmin = async (req, res) => {
             });
         }
 
-        const token = jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "7d" } );
+        const token = jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         res.json({
             success: true,
@@ -167,7 +178,9 @@ const apppointmentCancel = async (req, res) => {
 
         let slots_booked = doctorData.slots_booked;
 
+        if (slots_booked[slotDate]) {
         slots_booked[slotDate] = slots_booked[slotDate].filter(e => e !== slotTime)
+        }
 
         await doctorModel.findByIdAndUpdate(docId, { slots_booked });
 

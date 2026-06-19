@@ -9,7 +9,6 @@ const createAdmin = async () => {
         });
 
         if (existingAdmin) {
-            console.log("Admin already exists");
             return;
         }
 
@@ -25,7 +24,6 @@ const createAdmin = async () => {
             role: "admin"
         });
 
-        console.log("Admin created successfully");
 
     } catch (error) {
         console.log(error);

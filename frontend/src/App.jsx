@@ -22,6 +22,7 @@ const App = () => {
    <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 max-w-400 mx-auto">
       <ToastContainer position="top-right" autoClose={3000} pauseOnHover theme="light" />
       <Navbar/>
+
       
       <Routes>
 

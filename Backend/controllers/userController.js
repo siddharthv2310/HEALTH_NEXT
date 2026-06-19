@@ -13,6 +13,7 @@ import { verifyGoogleCode } from "../services/authService.js";
 // import { validateWebhookSignature } from 'razorpay'
 // api to register user
 
+
 const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -25,6 +26,15 @@ const registerUser = async (req, res) => {
         }
         if (password.length < 8) {
             return res.json({ success: false, message: "enter strong password of length 8 or greater" });
+        }
+
+        const existingUser = await userModel.findOne({ email });
+
+        if (existingUser) {
+            return res.json({
+                success: false,
+                message: "User already exists"
+            });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -67,13 +77,13 @@ const loginUser = async (req, res) => {
         }
 
         if (!user.password) {
-    return res.json({
-        success: false,
-        message: "This account was created using Google Sign-In"
-    });
-}
+            return res.json({
+                success: false,
+                message: "This account was created using Google Sign-In"
+            });
+        }
 
-       
+
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
@@ -119,7 +129,22 @@ const updateProfile = async (req, res) => {
             return res.json({ success: false, message: "data missing" })
         }
 
-        await userModel.findByIdAndUpdate(userId, { name, phone, address: JSON.parse(address), dob, gender })
+        let parsedAddress;
+
+        try {
+
+            parsedAddress = typeof address === "string" ? JSON.parse(address) : address;
+
+        }
+        catch {
+
+            return res.json({
+                success: false,
+                message: "Invalid address format"
+            });
+        }
+
+        await userModel.findByIdAndUpdate(userId, { name, phone, address:parsedAddress, dob, gender })
 
         if (imageFile) {
             //upload image to cloudinary
@@ -145,6 +170,13 @@ const bookAppointment = async (req, res) => {
         const { docId, slotDate, slotTime } = req.body;
 
         const docData = await doctorModel.findById(docId).select('-password');
+
+        if (!docData) {
+            return res.json({
+                success: false,
+                message: "Doctor not found"
+            });
+        }
 
         if (!docData.available) {
             return res.json({ success: false, message: "doctor not available" });
@@ -234,6 +266,13 @@ const cancelAppointments = async (req, res) => {
         const { appointmentId } = req.body;
 
         const appointmentData = await appointmentModel.findById(appointmentId);
+
+        if (!appointmentData) {
+            return res.json({
+                success: false,
+                message: "Appointment not found"
+            });
+        }
 
         //verify appointmentUser
 
@@ -344,7 +383,7 @@ const sendResetOtp = async (req, res) => {
             <h2>Password Reset Request</h2>
             <p>Your OTP is:</p>
             <h1>${otp}</h1>
-            <p>This OTP will expire in 2 minutes.</p>
+            <p>This OTP will expire in 1 minutes.</p>
 
             `
         )
@@ -493,7 +532,8 @@ const googleLogin = async (req, res) => {
 
         const token = jwt.sign(
             { id: user._id },
-            process.env.JWT_SECRET
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
         );
 
         return res.json({

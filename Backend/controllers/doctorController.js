@@ -4,11 +4,14 @@ import jwt from 'jsonwebtoken'
 import appointmentModel from "../models/appointmentModel.js";
 import { v2 as cloudinary } from "cloudinary";
 
-
 const changeAvailibility = async (req, res) => {
     try {
         const { docId } = req.body;
         const docData = await doctorModel.findById(docId);
+        if (!docData) {
+            return res.json({ success: false, message: "Doctor not found" });
+        }
+
         await doctorModel.findByIdAndUpdate(docId, { available: !docData.available });
         res.json({ success: true, message: "Availibility changed !" })
     }
@@ -43,7 +46,7 @@ const loginDoctor = async (req, res) => {
         const ismatch = await bcrypt.compare(password, doctor.password)
 
         if (ismatch) {
-            const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET)
+            const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET,  { expiresIn: "7d" })
 
             res.json({ success: true, token });
         }
@@ -81,6 +84,10 @@ const appointmentCompleted = async (req, res) => {
 
         const appointmentData = await appointmentModel.findById(appointmentId);
 
+        if (appointmentData.isCompleted) {
+            return res.json({ success: false, message: "Already completed" });
+        }
+
         if (appointmentData && appointmentData.docId.toString() === docId) {
             await appointmentModel.findByIdAndUpdate(appointmentId, { isCompleted: true });
             return res.json({ success: true, message: 'appointment Completed' })
@@ -103,6 +110,10 @@ const appointmentCancel = async (req, res) => {
         const { appointmentId } = req.body;
 
         const appointmentData = await appointmentModel.findById(appointmentId);
+
+        if (appointmentData.isCompleted) {
+            return res.json({ success: false, message: "Already cancelled" });
+        }
 
         if (appointmentData && appointmentData.docId.toString() === docId) {
             await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true });
@@ -177,10 +188,17 @@ const updateDoctorProfile = async (req, res) => {
 
         const { fees, available } = req.body;
 
-        const address =
-            typeof req.body.address === "string"
-                ? JSON.parse(req.body.address)
-                : req.body.address;
+        let address;
+
+        try {
+            address = typeof req.body.address === "string" ? JSON.parse(req.body.address) : req.body.address;
+        }
+        catch {
+            return res.json({
+                success: false,
+                message: "Invalid address"
+            });
+        }
 
         const imageFile = req.file;
 

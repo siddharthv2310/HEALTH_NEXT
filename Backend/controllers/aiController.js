@@ -5,12 +5,17 @@ import jsonSchemaPrompt from '../config/prompts/jsonSchemaPrompt.js';
 import handleIntent from '../services/aiIntentHandeler.js';
 import appointmentModel from '../models/appointmentModel.js';
 
-// Initialize the Google Gen AI SDK with your protected environment key
+
+// Initializing the Google Gen AI SDK with  environment key
+
+if (!process.env.GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY missing");
+}
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 
 const chatWithGemini = async (req, res) => {
-    console.log("AI CONTROLLER HIT");
+    
     try {
 
         const { messages } = req.body;
@@ -19,7 +24,7 @@ const chatWithGemini = async (req, res) => {
             return res.json({ success: false, message: "Please provide a prompt message." });
         }
 
-        const conversationHistory = messages
+        const conversationHistory = messages.slice(-10)
             .filter(
                 msg =>
                     msg.content !== "Hello! I'm HealthNest AI. How can I help you today?"
@@ -42,22 +47,22 @@ const chatWithGemini = async (req, res) => {
                 Available: ${doctor.available ? "Yes" : "No"}
                 `
         )
-        .join("\n");
+            .join("\n");
 
 
         const finalPrompt = `
-        ${systemPrompt}
+                ${systemPrompt}
 
-        ${jsonSchemaPrompt}
+                ${jsonSchemaPrompt}
 
-        Available Doctors:
+                Available Doctors:
 
-        ${doctorContext}
+                ${doctorContext}
 
-        Conversation History:
+                Conversation History:
 
-        ${conversationHistory}
-        `;
+                ${conversationHistory}
+            `;
 
 
         // Call the foundational Gemini 2.5 Flash model
@@ -71,7 +76,7 @@ const chatWithGemini = async (req, res) => {
 
         try {
             parsedResponse = JSON.parse(response.text);
-            console.log(parsedResponse);
+            
         }
         catch (error) {
 
@@ -85,7 +90,7 @@ const chatWithGemini = async (req, res) => {
 
 
         const result = await handleIntent(parsedResponse, req.userId);
-        console.log(result);
+        
         res.json(result);
 
 
@@ -142,6 +147,14 @@ const confirmCancellation = async (req, res) => {
 
         const appointment = await appointmentModel.findById(appointmentId);
 
+        if ( appointment.userId.toString() !== req.userId ) 
+        {
+            return res.json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
         if (!appointment) {
             return res.json({
                 success: false,
@@ -169,4 +182,4 @@ const confirmCancellation = async (req, res) => {
     }
 };
 
-export { chatWithGemini, confirmBooking,confirmCancellation };
+export { chatWithGemini, confirmBooking, confirmCancellation };
