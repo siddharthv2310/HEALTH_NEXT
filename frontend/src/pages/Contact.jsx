@@ -35,13 +35,13 @@ const Contact = () => {
               <p>Suite 350, Washington, USA</p>
 
               <p className="mt-4">Tel: (415) 555-0132</p>
-              <p>Email: greatstackdev@gmail.com</p>
+              <p>Email: healthNest@gmail.com</p>
             </div>
 
             {/* CAREERS */}
             <div>
               <h2 className="text-gray-900 font-semibold text-lg mb-3">
-                CAREERS AT PRESCRIPTO
+                CAREERS AT HealthNest
               </h2>
               <p className="mb-5">
                 Learn more about our teams and job openings.

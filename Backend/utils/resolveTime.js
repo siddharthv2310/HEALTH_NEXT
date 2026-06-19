@@ -1,8 +1,4 @@
-export const resolveTime = (
-    period,
-    availableSlots,
-    date
-) => {
+export const resolveTime = ( period, availableSlots, date ) => {
 
     let startHour;
     let endHour;

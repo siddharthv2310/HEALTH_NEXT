@@ -42,9 +42,8 @@ const chatWithGemini = async (req, res) => {
                 Available: ${doctor.available ? "Yes" : "No"}
                 `
         )
-            .join("\n");
+        .join("\n");
 
-        // console.log(doctorContext);
 
         const finalPrompt = `
         ${systemPrompt}
@@ -63,49 +62,32 @@ const chatWithGemini = async (req, res) => {
 
         // Call the foundational Gemini 2.5 Flash model
 
-        // const response = await ai.models.generateContent({
-        //     model: "gemini-2.5-flash",
-        //     contents: finalPrompt,
-        // });
-        // console.log("RAW GEMINI RESPONSE:");
-        // console.log(response.text);
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: finalPrompt,
+        });
 
-        // let parsedResponse;
+        let parsedResponse;
 
-        // try {
-        //     parsedResponse = JSON.parse(response.text);
-        //     console.log(parsedResponse);
-        // }
-        // catch (error) {
+        try {
+            parsedResponse = JSON.parse(response.text);
+            console.log(parsedResponse);
+        }
+        catch (error) {
 
-        //     console.log("JSON Parse Error:", error);
+            console.log("JSON Parse Error:", error);
 
-        //     return res.json({
-        //         success: false,
-        //         message: "AI returned an invalid response. Please try again."
-        //     });
-        // }
+            return res.json({
+                success: false,
+                message: "AI returned an invalid response. Please try again."
+            });
+        }
 
-       
-        const parsedResponse = {
-            intent: "available_doctors",
-            //symptoms:"Skin itching"
-            //speciality:"dermatologist",
-            //doctorName: "emily ",
-            // date: "22 june",
-            // time: null ,
-            // timePeriod: morning
-        };
-        // Send the generated text back to your React application
 
         const result = await handleIntent(parsedResponse, req.userId);
         console.log(result);
         res.json(result);
 
-        // res.json({
-        //     success: true,
-        //     reply: conversationHistory
-        // });
 
     } catch (error) {
         console.error(error);

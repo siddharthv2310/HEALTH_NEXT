@@ -12,7 +12,7 @@ Use this exact structure:
 
 {
   "reply": "string",
-  "intent": "view_doctors | view_doctor | symptom_consultation | book_appointment | cancel_appointment | view_appointments   | clinic_hours | general_query | unknown",
+  "intent": "view_doctors | view_doctor | check_availability | symptom_consultation | book_appointment | cancel_appointment | view_appointments   | clinic_hours | general_query | unknown",
   "doctorName": "string or null",
   "speciality": "string or null",
   "date": "string or null",
@@ -201,11 +201,41 @@ User: Show available dermatologists
     "intent": "available_doctors",
     "speciality": "Dermatologist"
 }
-    User: Which cardiologists are available?
+User: Which cardiologists are available?
 
 {
     "intent": "available_doctors",
     "speciality": "Cardiologist"
+}
+
+6.if user ask for if doctor this is available on some dat and some time then return ;
+{
+  "intent": "check_availability",
+  "doctorName": "string",
+  "date": "string",
+  "time": "string or null",
+  "timePeriod": "morning | afternoon | evening | night | null"
+}
+  Example:
+
+User: Is Dr Rajneesh available tomorrow at 12:30?
+
+{
+  "intent": "check_availability",
+  "doctorName": "Rajneesh",
+  "date": "tomorrow",
+  "time": "12:30",
+  "timePeriod": null
+}
+
+User: Is Dr Rajneesh available tomorrow morning?
+
+{
+  "intent": "check_availability",
+  "doctorName": "Rajneesh",
+  "date": "tomorrow",
+  "time": null,
+  "timePeriod": "morning"
 }
 
 
