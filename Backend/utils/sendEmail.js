@@ -1,18 +1,14 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  service: "gmail",
 
   auth: {
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,
   },
 
-  tls: {
-    rejectUnauthorized: false,
-  },
+  family: 4, // Force IPv4 instead of IPv6
 });
 
 transporter.verify((error, success) => {
@@ -39,7 +35,6 @@ const sendEmail = async (to, subject, html) => {
     console.log("Mail sent:", info.messageId);
 
     return info;
-
   } catch (error) {
     console.log("Email Error:", error);
     throw error;
