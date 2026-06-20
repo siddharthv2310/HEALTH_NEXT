@@ -1,41 +1,19 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-
-  family: 4, // Force IPv4 instead of IPv6
-});
-
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("SMTP Verify Error:", error);
-  } else {
-    console.log("SMTP Server Ready");
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (to, subject, html) => {
   try {
-    const mailOptions = {
-      from: process.env.EMAIL,
+    const data = await resend.emails.send({
+      from: "onboarding@resend.dev",
       to,
       subject,
       html,
-    };
+    });
 
-    console.log("Sending mail to:", to);
-
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log("Mail sent:", info.messageId);
-
-    return info;
-  } catch (error) {
+    return data;
+  } 
+  catch (error) {
     console.log("Email Error:", error);
     throw error;
   }
