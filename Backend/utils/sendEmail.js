@@ -2,13 +2,25 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
 
   auth: {
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,
   },
+
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("SMTP Verify Error:", error);
+  } else {
+    console.log("SMTP Server Ready");
+  }
 });
 
 const sendEmail = async (to, subject, html) => {
@@ -20,7 +32,13 @@ const sendEmail = async (to, subject, html) => {
       html,
     };
 
+    console.log("Sending mail to:", to);
+
     const info = await transporter.sendMail(mailOptions);
+
+    console.log("Mail sent:", info.messageId);
+
+    return info;
 
   } catch (error) {
     console.log("Email Error:", error);
