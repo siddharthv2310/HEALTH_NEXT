@@ -412,7 +412,7 @@ const sendResetOtp = async (req, res) => {
 
 
         // it should be await  
-        sendEmail(
+        await sendEmail(
             email,
             "password reset otp",
             `

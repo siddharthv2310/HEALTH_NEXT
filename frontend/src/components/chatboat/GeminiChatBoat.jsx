@@ -27,7 +27,7 @@ const GeminiChatBoat = () => {
     const [messages, setMessages] = useState([defaultMessage]);
     const bottomRef = useRef(null);
     const [loading, setLoading] = useState(false);
-    const [bookingLoading, setBookingLoading] = useState(false);
+    const [bookingLoadingId, setBookingLoadingId] = useState(null);
     //const [pendingBooking, setPendingBooking] = useState(null);
 
     const sendMessage = async () => {
@@ -202,7 +202,7 @@ const GeminiChatBoat = () => {
     const bookDoctorDirectly = async (doctorId, bookingData) => {
 
         try {
-            setBookingLoading(true);
+            setBookingLoadingId(doctorId);
 
             if (!bookingData?.slotDate) {
                 toast.error("Booking date missing");
@@ -273,7 +273,7 @@ const GeminiChatBoat = () => {
             );
         }
         finally {
-            setBookingLoading(false);
+            setBookingLoadingId(null);
         }
     };
 
@@ -421,7 +421,7 @@ const GeminiChatBoat = () => {
                                         )
                                     }
 
-                                    <DoctorsList doctors={message.doctors} onBookDoctor={bookDoctorDirectly} bookingLoading={bookingLoading} />
+                                    <DoctorsList doctors={message.doctors} onBookDoctor={bookDoctorDirectly} bookingLoadingId={bookingLoadingId} />
 
                                     <AboutDoctor doctor={message.doctor} />
 

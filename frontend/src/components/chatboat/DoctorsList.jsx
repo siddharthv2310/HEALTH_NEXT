@@ -1,4 +1,4 @@
-const DoctorsList = ({doctors, onBookDoctor , bookingLoading}) => {
+const DoctorsList = ({ doctors, onBookDoctor, bookingLoadingId }) => {
 
     if (!doctors?.length) {
         return null;
@@ -35,8 +35,21 @@ const DoctorsList = ({doctors, onBookDoctor , bookingLoading}) => {
                             : "Unavailable"}
                     </p>
 
+                    {
+                        doctor.nearestSlot && (
+                            <p className="mt-2 text-sm text-orange-600 font-medium">
+                                Requested time is unavailable.
+                                <br />
+                                Nearest Slot: {doctor.nearestSlot}
+                            </p>
+                        )
+                    }
+
                     <button
-                        disabled={!doctor.available || bookingLoading}
+                        disabled={
+                            !doctor.available ||
+                            bookingLoadingId === doctor.id
+                        }
                         onClick={() =>
                             onBookDoctor(
                                 doctor.id,
@@ -49,8 +62,13 @@ const DoctorsList = ({doctors, onBookDoctor , bookingLoading}) => {
                                 : "bg-gray-400 cursor-not-allowed"
                         }`}
                     >
-                        {doctor.available
-                            ? bookingLoading ? "Booking..." : "Book Appointment" : "Unavailable"}
+                        {
+                            bookingLoadingId === doctor.id
+                                ? "Booking..."
+                                : doctor.available
+                                    ? "Book Appointment"
+                                    : "Unavailable"
+                        }
                     </button>
 
                 </div>

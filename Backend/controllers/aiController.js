@@ -15,7 +15,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 
 const chatWithGemini = async (req, res) => {
-    
+
     try {
 
         const { messages } = req.body;
@@ -65,7 +65,7 @@ const chatWithGemini = async (req, res) => {
             `;
 
 
-        // Call the foundational Gemini 2.5 Flash model
+        //Call the foundational Gemini 2.5 Flash model
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
@@ -76,7 +76,7 @@ const chatWithGemini = async (req, res) => {
 
         try {
             parsedResponse = JSON.parse(response.text);
-            
+
         }
         catch (error) {
 
@@ -88,20 +88,31 @@ const chatWithGemini = async (req, res) => {
             });
         }
 
+        // const parsedResponse = {
+        //     intent: "book_appointment",
+        //     doctorName: "Christopher",
+        //     date: "22 June",
+        //     time: "10:38",
+        //     timePeriod: null
+        // };
+
 
         const result = await handleIntent(parsedResponse, req.userId);
-        
+
         res.json(result);
 
 
     } catch (error) {
         console.error(error);
 
-        if (error.status === 429) {
+        if ( error.status === 429 || error.message?.includes("RESOURCE_EXHAUSTED")) 
+        {
             return res.json({
-                success: false,
-                message:
-                    "Daily AI quota exceeded. Please try again later."
+                success: true,
+                aiResponse: {
+                    reply:
+                        "I'm currently unavailable. Please try again in a little while."
+                }
             });
         }
 
@@ -147,8 +158,7 @@ const confirmCancellation = async (req, res) => {
 
         const appointment = await appointmentModel.findById(appointmentId);
 
-        if ( appointment.userId.toString() !== req.userId ) 
-        {
+        if (appointment.userId.toString() !== req.userId) {
             return res.json({
                 success: false,
                 message: "Unauthorized"

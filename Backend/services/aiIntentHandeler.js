@@ -166,53 +166,72 @@ const handleIntent = async (parsedResponse, userId) => {
             // MULTIPLE DOCTORS
             if (doctors.length > 1) {
 
-                let bookingTime = time;
+                const doctorsWithBookingData = doctors.map(doc => {
 
-                if (!bookingTime && timePeriod) {
+                    const availableSlots = getAvailableSlots(doc);
 
-                    const availableSlots =
-                        getAvailableSlots(doctors[0]);
+                    let finalBookingTime = time;
+                    let nearestSlot = null;
 
-                    const suggestedSlot =
-                        resolveTime(
-                            timePeriod,
-                            availableSlots,
-                            bookingDate
-                        );
+                    if (!finalBookingTime && timePeriod) {
 
-                    if (!suggestedSlot) {
+                        const suggestedSlot =  resolveTime( timePeriod, availableSlots, bookingDate );
 
-                        return {
-                            success: true,
-                            aiResponse: {
-                                reply: `No slots available in the ${timePeriod}.`
-                            }
-                        };
+                        if (suggestedSlot) {
+                            finalBookingTime = suggestedSlot.slotTime;
+                        }
                     }
 
-                    bookingTime =
-                        suggestedSlot.slotTime;
-                }
+                    if (finalBookingTime) {
+
+                        const isValidSlot =
+                            availableSlots.some(
+                                slot =>
+                                    slot.slotDate === bookingDate &&
+                                    slot.slotTime === finalBookingTime
+                            );
+                        console.log("Doctor:", doc.name);
+    console.log("Requested Time:", finalBookingTime);
+    console.log("Booking Date:", bookingDate);
+    console.log("isValidSlot:", isValidSlot);
+
+
+                        if (!isValidSlot) {
+
+                            nearestSlot =  findNearestSlot(bookingDate, finalBookingTime, availableSlots );
+
+                            if (nearestSlot) {
+                                finalBookingTime = nearestSlot.slotTime;
+                            }
+                        }
+                    }
+
+                    return {
+                        id: doc._id,
+                        name: doc.name,
+                        speciality: doc.speciality,
+                        experience: doc.experience,
+                        fees: doc.fees,
+                        available: doc.available,
+
+                        nearestSlot:
+                            nearestSlot?.slotTime || null,
+
+                        bookingData: {
+                            slotDate: bookingDate,
+                            slotTime: finalBookingTime
+                        }
+                    };
+                });
 
                 return {
                     success: true,
                     aiResponse: {
                         reply:
-                            "I found multiple doctors with that name. Please choose the doctor you want to book an appointment with.",
+                            "I found multiple doctors with that name. Please select one doctor.",
 
-                        doctors: doctors.map(doc => ({
-                            id: doc._id,
-                            name: doc.name,
-                            speciality: doc.speciality,
-                            experience: doc.experience,
-                            fees: doc.fees,
-                            available: doc.available,
-
-                            bookingData: {
-                                slotDate: bookingDate,
-                                slotTime: bookingTime
-                            }
-                        }))
+                        doctors:
+                            doctorsWithBookingData
                     }
                 };
             }

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const { sendOtp } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -16,17 +17,44 @@ const ForgotPassword = () => {
       return;
     }
 
-    const data = await sendOtp(email);
+    setLoading(true);
 
-    if (data.success) {
-      toast.success(data.message);
+    try {
 
-      localStorage.setItem("resetEmail", email);
-      localStorage.setItem("otpExpireAt", data.expireAt);
+      const data = await sendOtp(email);
 
-      navigate("/verify-reset-otp");
-    } else {
-      toast.error(data.message);
+      if (data.success) {
+
+        toast.success(data.message);
+
+        localStorage.setItem(
+          "resetEmail",
+          email
+        );
+
+        localStorage.setItem(
+          "otpExpireAt",
+          data.expireAt
+        );
+
+        navigate("/verify-reset-otp");
+
+      } else {
+
+        toast.error(data.message);
+
+      }
+
+    } catch (error) {
+
+      toast.error(
+        "Failed to send OTP"
+      );
+
+    } finally {
+
+      setLoading(false);
+
     }
   };
 
@@ -60,9 +88,17 @@ const ForgotPassword = () => {
 
         <button
           type="submit"
-          className="w-full mt-8 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-base sm:text-lg font-medium hover:shadow-lg active:scale-[0.98] transition-all"
+          disabled={loading}
+          className={`w-full mt-8 py-3 rounded-xl text-white text-base sm:text-lg font-medium transition-all ${loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gradient-to-r from-indigo-500 to-indigo-600 hover:shadow-lg active:scale-[0.98]"
+            }`}
         >
-          Send OTP
+          {
+            loading
+              ? "Sending OTP..."
+              : "Send OTP"
+          }
         </button>
 
         <p className="text-center mt-6 text-sm sm:text-base">

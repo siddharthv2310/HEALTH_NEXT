@@ -16,12 +16,14 @@ const OTPVerification = () => {
   // const location = useLocation();
   const email = localStorage.getItem("resetEmail");
   const [expireAt, setExpireAt] = useState(Number(localStorage.getItem("otpExpireAt")));
- 
+
   //for countdown of otp verification;
   const [timeLeft, setTimeLeft] = useState(() => {
-  const expire = Number(localStorage.getItem("otpExpireAt"));
-  return expire ? Math.max(0, Math.floor((expire - Date.now()) / 1000)) : 0;
-});
+    const expire = Number(localStorage.getItem("otpExpireAt"));
+    return expire ? Math.max(0, Math.floor((expire - Date.now()) / 1000)) : 0;
+  });
+
+  const [resendLoading, setResendLoading] = useState(false);
 
   useEffect(() => {
 
@@ -160,16 +162,34 @@ const OTPVerification = () => {
 
   const sendAgainOtp = async () => {
 
-    const data = await sendOtp(email);
+    setResendLoading(true);
 
-    if (data.success) {
-      localStorage.setItem("otpExpireAt", data.expireAt);
-      setExpireAt(data.expireAt);
-      toast.success("OTP resend successfully")
-    }
+    try {
 
-    else {
-      toast.error(data.message);
+      const data = await sendOtp(email);
+
+      if (data.success) {
+
+        localStorage.setItem("otpExpireAt", data.expireAt);
+
+        setExpireAt(
+          data.expireAt
+        );
+
+        toast.success("OTP resent successfully");
+
+      } else {
+
+        toast.error(
+          data.message
+        );
+
+      }
+
+    } finally {
+
+      setResendLoading(false);
+
     }
 
   }
@@ -202,10 +222,10 @@ const OTPVerification = () => {
           Enter the 6-digit code sent to your email
         </p>
 
-       <div
-  className="flex justify-center gap-2 sm:gap-3 mt-8"
-  onPaste={handlePaste}
->
+        <div
+          className="flex justify-center gap-2 sm:gap-3 mt-8"
+          onPaste={handlePaste}
+        >
           {otp.map((digit, index) => (
             <input
               key={index}
@@ -239,17 +259,22 @@ const OTPVerification = () => {
         <button
           disabled={timeLeft === 0}
           onClick={handleVerify}
-         className={`w-full mt-6 py-3 rounded-xl text-white font-medium transition-all ${timeLeft === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-indigo-500 to-indigo-600 hover:shadow-lg active:scale-[0.98]"}`}
+          className={`w-full mt-6 py-3 rounded-xl text-white font-medium transition-all ${timeLeft === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-indigo-500 to-indigo-600 hover:shadow-lg active:scale-[0.98]"}`}
         >
           Verify OTP
         </button>
 
         {timeLeft === 0 && (
           <p
-            onClick={sendAgainOtp}
-            className="text-center mt-4 text-indigo-600 cursor-pointer"
+            onClick={ resendLoading ? undefined : sendAgainOtp }
+            className={`text-center mt-4 ${resendLoading
+                ? "text-gray-400"
+                : "text-indigo-600 cursor-pointer"
+              }`}
           >
-            Resend OTP
+            {
+              resendLoading ? "Sending OTP..." : "Resend OTP"
+            }
           </p>
         )}
       </div>
