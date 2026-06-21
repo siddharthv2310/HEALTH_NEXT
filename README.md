@@ -9,13 +9,6 @@ https://healthnest-admin-panel.vercel.app/admin-login
 ### Backend API
 https://healthnest-backend-g62t.onrender.com
 
-## 👨‍💻 Author
-
-Siddharth Verma
-
-B.Tech CSE | NIT Patna
-
-GitHub: https://github.com/siddharthv2310
 ----
 
 # 🏥 HealthNest
@@ -254,6 +247,16 @@ VITE_GOOGLE_CLIENT_ID=
 * Medical Records Storage
 * AI Health Insights
 * Multi-Language Support
+
+---
+
+## 👨‍💻 Author
+
+Siddharth Verma
+
+B.Tech CSE | NIT Patna
+
+GitHub: https://github.com/siddharthv2310
 
 ---
 
