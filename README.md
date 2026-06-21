@@ -243,7 +243,7 @@ VITE_GOOGLE_CLIENT_ID=
 https://health-next-iw4c.vercel.app/
 
 ### Admin Panel
-https://your-admin-panel.vercel.app/
+https://healthnest-admin-panel.vercel.app/admin-login
 
 ### Backend API
 https://healthnest-backend-g62t.onrender.com
