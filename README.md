@@ -237,6 +237,17 @@ VITE_GOOGLE_CLIENT_ID=
 
 ---
 
+## Live Links
+
+### User Website
+https://health-next-iw4c.vercel.app/
+
+### Admin Panel
+https://your-admin-panel.vercel.app/
+
+### Backend API
+https://healthnest-backend-g62t.onrender.com
+
 ## 👨‍💻 Author
 
 Siddharth Verma
@@ -246,5 +257,6 @@ B.Tech CSE | NIT Patna
 GitHub: https://github.com/siddharthv2310
 
 ---
+
 
 ## ⭐ If you found this project useful, consider giving it a star.
