@@ -1,3 +1,23 @@
+## Live Links
+
+### User Website
+https://health-next-iw4c.vercel.app/
+
+### Admin Panel
+https://healthnest-admin-panel.vercel.app/admin-login
+
+### Backend API
+https://healthnest-backend-g62t.onrender.com
+
+## 👨‍💻 Author
+
+Siddharth Verma
+
+B.Tech CSE | NIT Patna
+
+GitHub: https://github.com/siddharthv2310
+----
+
 # 🏥 HealthNest
 
 HealthNest is a full-stack healthcare appointment booking platform built using the MERN stack. It enables patients to book appointments with doctors, manage profiles, make online payments, and interact with an AI-powered healthcare assistant. The platform also provides dedicated Admin and Doctor dashboards for efficient management.
@@ -234,27 +254,6 @@ VITE_GOOGLE_CLIENT_ID=
 * Medical Records Storage
 * AI Health Insights
 * Multi-Language Support
-
----
-
-## Live Links
-
-### User Website
-https://health-next-iw4c.vercel.app/
-
-### Admin Panel
-https://healthnest-admin-panel.vercel.app/admin-login
-
-### Backend API
-https://healthnest-backend-g62t.onrender.com
-
-## 👨‍💻 Author
-
-Siddharth Verma
-
-B.Tech CSE | NIT Patna
-
-GitHub: https://github.com/siddharthv2310
 
 ---
 
