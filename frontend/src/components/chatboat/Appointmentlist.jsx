@@ -36,13 +36,20 @@ const AppointmentList = ({
                         Fee : ₹{app.amount}
                     </p>
 
-                    {
+                {
                         app.cancelled ? (
                             <button
                                 disabled
                                 className="mt-3 bg-gray-400 text-white px-3 py-2 rounded-lg cursor-not-allowed"
                             >
                                 Cancelled
+                            </button>
+                        ) : app.payment ? (
+                            <button
+                                disabled
+                                className="mt-3 bg-green-500 text-white px-3 py-2 rounded-lg cursor-not-allowed"
+                            >
+                                Paid Appointment
                             </button>
                         ) : (
                             <button

@@ -7,8 +7,7 @@ import DoctorsList from "./DoctorsList";
 import AboutDoctor from "./AboutDoctor";
 import { toast } from "react-toastify";
 import { useAppointments } from "../../context/AppointmentContext";
-
-
+import { useNavigate } from "react-router-dom";
 
 
 const GeminiChatBoat = () => {
@@ -29,12 +28,26 @@ const GeminiChatBoat = () => {
     const [loading, setLoading] = useState(false);
     const [bookingLoadingId, setBookingLoadingId] = useState(null);
     //const [pendingBooking, setPendingBooking] = useState(null);
+    const navigate = useNavigate();
 
     const sendMessage = async () => {
         const messageText = input.trim().toLowerCase();
 
 
         if (!messageText) return;
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+
+            toast.info(
+                "Please login to use HealthNest AI."
+            );
+
+            navigate("/login");
+
+            return;
+        }
 
 
         const userMessage = {
@@ -181,24 +194,46 @@ const GeminiChatBoat = () => {
         }
     };
 
-    const clearChat = () => {
+    const clearChat = async () => {
+
         const confirmed = window.confirm(
             "Are you sure you want to clear the chat history?"
         );
 
         if (!confirmed) return;
 
-        localStorage.removeItem("healthnest-chat");
+        try {
 
-        setMessages([
-            {
-                id: 1,
-                role: "assistant",
-                content: "Hello! I'm HealthNest AI. How can I help you today?"
+            const { data } = await axios.delete(
+                backendUrl + "/api/ai/clear-history",
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}
+                }
+            );
+
+            if (data.success) {
+
+                setMessages([
+                    {
+                        id: 1,
+                        role: "assistant",
+                        content:
+                            "Hello! I'm HealthNest AI. How can I help you today?"
+                    }
+                ]);
+
+                toast.success("Chat history cleared");
             }
-        ]);
-    };
 
+        } catch (error) {
+
+            console.log(error);
+
+            toast.error("Unable to clear chat");
+
+        }
+
+    };
     const bookDoctorDirectly = async (doctorId, bookingData) => {
 
         try {
@@ -308,26 +343,25 @@ const GeminiChatBoat = () => {
     }, [isOpen]);
 
     useEffect(() => {
-        const savedMessages = localStorage.getItem("healthnest-chat");
+        const loadChatHistory = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return setMessages([{ id: 1, role: "assistant", content: "Please login to use HealthNest AI." }]);
 
-        if (savedMessages) {
-            const parsed = JSON.parse(savedMessages);
+                const { data } = await axios.get(backendUrl + "/api/ai/history", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-            if (parsed.length > 0) {
-                setMessages(parsed);
+                if (data.success && data.messages.length > 0)
+                    setMessages(data.messages.map((message, index) => ({ id: index + 1, ...message })));
+
+            } catch (error) {
+                console.log(error);
             }
-        }
-    }, []);
+        };
 
-    useEffect(() => {
-        if (messages.length > 0) {
-            localStorage.setItem(
-                "healthnest-chat",
-                JSON.stringify(messages)
-            );
-        }
-    }, [messages]);
-
+        loadChatHistory();
+    }, [isOpen]);
 
     return (
         <>

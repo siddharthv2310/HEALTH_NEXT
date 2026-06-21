@@ -175,7 +175,7 @@ const handleIntent = async (parsedResponse, userId) => {
 
                     if (!finalBookingTime && timePeriod) {
 
-                        const suggestedSlot =  resolveTime( timePeriod, availableSlots, bookingDate );
+                        const suggestedSlot = resolveTime(timePeriod, availableSlots, bookingDate);
 
                         if (suggestedSlot) {
                             finalBookingTime = suggestedSlot.slotTime;
@@ -190,15 +190,11 @@ const handleIntent = async (parsedResponse, userId) => {
                                     slot.slotDate === bookingDate &&
                                     slot.slotTime === finalBookingTime
                             );
-                        console.log("Doctor:", doc.name);
-    console.log("Requested Time:", finalBookingTime);
-    console.log("Booking Date:", bookingDate);
-    console.log("isValidSlot:", isValidSlot);
 
 
                         if (!isValidSlot) {
 
-                            nearestSlot =  findNearestSlot(bookingDate, finalBookingTime, availableSlots );
+                            nearestSlot = findNearestSlot(bookingDate, finalBookingTime, availableSlots);
 
                             if (nearestSlot) {
                                 finalBookingTime = nearestSlot.slotTime;
@@ -391,7 +387,7 @@ const handleIntent = async (parsedResponse, userId) => {
 
         case "cancel_appointment":
 
-            const appointments = await appointmentModel.find({ userId, cancelled: false });
+            const appointments = await appointmentModel.find({ userId, cancelled: false ,  payment: false });
             let filteredAppointments = appointments;
 
             if (doctorName) {
@@ -430,14 +426,13 @@ const handleIntent = async (parsedResponse, userId) => {
                 success: true,
                 aiResponse: {
                     reply: "Which appointment would you like to cancel?",
-                    appointments: filteredAppointments.map(app => ({
+                    appointments: appointments.map(app => ({
                         id: app._id,
                         doctorName: app.docData.name,
-                        speciality: app.docData.speciality,
-                        date: app.slotDate,
-                        time: app.slotTime,
-                        amount: app.amount,
-                        cancelled: app.cancelled
+                        slotDate: app.slotDate,
+                        slotTime: app.slotTime,
+                        payment: app.payment,
+                        canCancel: !app.payment
                     }))
                 }
             };
