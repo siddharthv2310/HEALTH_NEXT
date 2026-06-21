@@ -22,7 +22,9 @@ import DoctorsList from './pages/admin/DoctorsList';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import DoctorAppointment from './pages/doctor/DoctorAppointment';
 import DoctorProfile from './pages/doctor/DoctorProfile';
+
 import ScrollToTop from "./components/ScrollToTop";
+import NotFound from './pages/NotFound';
 
 const App = () => {
 
@@ -31,9 +33,29 @@ const App = () => {
 
   const location = useLocation();
 
+  const validRoutes = [
+    '/',
+    '/admin-login',
+    '/doctor-login',
+    '/admin-dashboard',
+    '/all-appointments',
+    '/add-doctor',
+    '/doctor-list',
+    '/doctor-dashboard',
+    '/doctor-appointment',
+    '/doctor-profile'
+  ];
+
+  const isValidRoute = validRoutes.includes(location.pathname);
+
   const isAuthPage =
     location.pathname === '/admin-login' ||
     location.pathname === '/doctor-login';
+
+  const showLayout =
+    isValidRoute &&
+    !isAuthPage &&
+    (aToken || dToken);
 
   return (
     <>
@@ -41,22 +63,21 @@ const App = () => {
 
       <ScrollToTop />
 
-      {/* Navbar only after login */}
-      {!isAuthPage && (aToken || dToken) && <Navbar />}
+      {showLayout && <Navbar />}
 
       <div
         className={
-          !isAuthPage && (aToken || dToken)
+          showLayout
             ? "flex bg-[#F8F9FD] min-h-screen pt-20 md:pt-25"
             : ""
         }
       >
-        {/* Sidebar only after login */}
-        {!isAuthPage && (aToken || dToken) && <Sidebar />}
+
+        {showLayout && <Sidebar />}
 
         <div
           className={
-            !isAuthPage && (aToken || dToken)
+            showLayout
               ? "flex-1 min-w-0 ml-16 md:ml-70 p-4 md:p-0 md:pl-5 transition-all duration-300"
               : "flex-1"
           }
@@ -65,13 +86,23 @@ const App = () => {
           <Routes>
 
             {/* Default Route */}
-            <Route path="/" element={<Navigate to="/admin-login" />} />
+            <Route
+              path="/"
+              element={<Navigate to="/admin-login" />}
+            />
 
             {/* Login Routes */}
-            <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/doctor-login" element={<DoctorLogin />} />
+            <Route
+              path="/admin-login"
+              element={<AdminLogin />}
+            />
 
-            {/* Admin Protected Routes */}
+            <Route
+              path="/doctor-login"
+              element={<DoctorLogin />}
+            />
+
+            {/* Admin Routes */}
             <Route
               path="/admin-dashboard"
               element={
@@ -108,7 +139,7 @@ const App = () => {
               }
             />
 
-            {/* Doctor Protected Routes */}
+            {/* Doctor Routes */}
             <Route
               path="/doctor-dashboard"
               element={
@@ -136,9 +167,16 @@ const App = () => {
               }
             />
 
+            {/* Not Found */}
+            <Route
+              path="*"
+              element={<NotFound />}
+            />
+
           </Routes>
 
         </div>
+
       </div>
     </>
   );
