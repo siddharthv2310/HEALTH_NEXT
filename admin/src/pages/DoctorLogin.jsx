@@ -39,12 +39,17 @@ const DoctorLogin = () => {
             }
 
         } catch (err) {
-            toast.error(err.message)
+            console.log(err);
+
+            toast.error(
+                err.response?.data?.message ||
+                "Something went wrong. Please try again."
+            );
         }
     }
 
     return (
-       <div className='min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-emerald-100 px-4 py-6'>
+        <div className='min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-emerald-100 px-4 py-6'>
 
             <form
                 onSubmit={onSubmitHandler}
@@ -97,8 +102,8 @@ const DoctorLogin = () => {
 
                 <p className='text-sm text-gray-600 text-center'>
                     Admin Login? <span className='text-blue-600 font-medium cursor-pointer hover:underline'>
-                    <Link to="/admin-login">Click Here</Link>
-                </span></p>
+                        <Link to="/admin-login">Click Here</Link>
+                    </span></p>
 
             </form>
 

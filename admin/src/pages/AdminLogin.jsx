@@ -37,7 +37,12 @@ const AdminLogin = () => {
             }
 
         } catch (err) {
-            toast.error(err.message)
+            console.log(err);
+
+            toast.error(
+                err.response?.data?.message ||
+                "Something went wrong. Please try again."
+            );
         }
     }
 
@@ -95,9 +100,9 @@ const AdminLogin = () => {
 
                 <p className='text-sm text-gray-600 text-center'>
                     Doctor Login? <span className='text-blue-600 font-medium cursor-pointer hover:underline'>
-                    <Link to="/doctor-login">Click Here</Link>
-                </span></p>
-   
+                        <Link to="/doctor-login">Click Here</Link>
+                    </span></p>
+
             </form>
 
         </div>
