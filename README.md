@@ -1,3 +1,16 @@
+## Live Links
+
+### User Website
+https://health-next-iw4c.vercel.app/
+
+### Admin Panel
+https://healthnest-admin-panel.vercel.app/admin-login
+
+### Backend API
+https://healthnest-backend-g62t.onrender.com
+
+----
+
 # 🏥 HealthNest
 
 HealthNest is a full-stack healthcare appointment booking platform built using the MERN stack. It enables patients to book appointments with doctors, manage profiles, make online payments, and interact with an AI-powered healthcare assistant. The platform also provides dedicated Admin and Doctor dashboards for efficient management.
@@ -236,17 +249,6 @@ VITE_GOOGLE_CLIENT_ID=
 * Multi-Language Support
 
 ---
-
-## Live Links
-
-### User Website
-https://health-next-iw4c.vercel.app/
-
-### Admin Panel
-https://your-admin-panel.vercel.app/
-
-### Backend API
-https://healthnest-backend-g62t.onrender.com
 
 ## 👨‍💻 Author
 
