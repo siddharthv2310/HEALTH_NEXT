@@ -94,7 +94,11 @@ const chatWithGemini = async (req, res) => {
                 Conversation History:
 
                 ${conversationHistory}
-            `;
+
+                Current User Message:
+
+                ${latestUserMessage.content}
+               `;
 
 
         //Call the foundational Gemini 2.5 Flash model
@@ -151,7 +155,8 @@ const chatWithGemini = async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        if (error.status === 429 || error.message?.includes("RESOURCE_EXHAUSTED")) {
+        if ( error.status === 429 || error.status === 503 || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("UNAVAILABLE")) 
+            {
             return res.json({
                 success: true,
                 aiResponse: {
