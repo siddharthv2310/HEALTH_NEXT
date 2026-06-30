@@ -52,7 +52,7 @@ const registerUser = async (req, res) => {
 
         //token creation 
     
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "1m" })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "7d" })
         res.json({
             success: true,
             token
@@ -89,7 +89,7 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
-             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "1m" })
+             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "7d" })
             // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
             res.json({ success: true, token });
         }
@@ -572,7 +572,7 @@ const googleLogin = async (req, res) => {
         //     process.env.JWT_SECRET,
         //     { expiresIn: "7d" }
         // );
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "1m" })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "7d" })
 
         return res.json({
             success: true,
