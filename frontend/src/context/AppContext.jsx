@@ -1,88 +1,135 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import axios from 'axios'
+import { createContext, useEffect, useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
 
-export const AppContext=createContext();
-
+export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
-    const currencySymbol='$';
-    const backendUrl=import.meta.env.VITE_BACKEND_URL;
-    const [doctors,setDoctors] = useState([]);
-    const [token,setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):false)
 
-    const [userData,setUserData]=useState(false);
+    const currencySymbol = "$";
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+    const [doctors, setDoctors] = useState([]);
+    const [token, setToken] = useState(
+        localStorage.getItem("token") || false
+    );
+    const [userData, setUserData] = useState(false);
 
+    // LOGOUT 
 
-    const getDoctorsData = async ()=>{
-        try{
-            const {data}= await axios.get(backendUrl + '/api/doctor/list')
-            if(data.success){
+    const logoutUser = () => {
+        localStorage.removeItem("token");
+        setToken(false);
+        setUserData(false);
+    };
+
+    //  GET DOCTORS 
+
+    const getDoctorsData = async () => {
+        try {
+
+            const { data } = await axios.get(
+                backendUrl + "/api/doctor/list"
+            );
+
+            if (data.success) {
                 setDoctors(data.doctors);
-
-            }
-            else{
+            } else {
                 toast.error(data.message);
             }
+
+        } catch (error) {
+
+            console.log(error);
+            toast.error(
+                error.response?.data?.message || error.message
+            );
+
         }
-        catch(e){
-            console.log(e);
-            toast.error(e.message);
-        }
-    }   
+    };
 
-//     axios.get(url, {
-//     headers: {
-//         Authorization: `Bearer ${token}`
-//     }
-// })
+    //  LOAD USER PROFILE 
 
-    const loadUserProfileData = async ()=>{
-        try{
-            const {data}= await axios.get(backendUrl+'/api/user/get-profile',{headers:{Authorization: `Bearer ${token}`}})
+    const loadUserProfileData = async () => {
 
-            if(data.success){
+        if (!token) return;
+
+        try {
+
+            const { data } = await axios.get(
+                backendUrl + "/api/user/get-profile",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (data.success) {
+
                 setUserData(data.userData);
-            }
-            else{
+
+            } else {
+
                 toast.error(data.message);
+
             }
+
+        } catch (error) {
+
+            console.log(error);
+
+            if (error.response?.status === 401) {
+
+                logoutUser();
+
+                toast.info("Session expired. Please login again.");
+
+                return;
+            }
+
+            toast.error(
+                error.response?.data?.message || error.message
+            );
         }
-        catch(e){
-            console.log(e);
-            toast.error(e.message);
-        }
-    }
+    };
 
+    //  CONTEXT VALUE 
 
-
-     const value={
-        doctors,getDoctorsData,
+    const value = {
+        doctors,
+        getDoctorsData,
         currencySymbol,
-        token,setToken,backendUrl,setUserData,userData,
-        loadUserProfileData
-    }
+        backendUrl,
+        token,
+        setToken,
+        userData,
+        setUserData,
+        loadUserProfileData,
+        logoutUser
+    };
 
+    //  EFFECTS 
 
-    useEffect(()=>{
+    useEffect(() => {
         getDoctorsData();
-    },[])
-    useEffect(()=>{
-        if(token){
+    }, []);
+
+    useEffect(() => {
+
+        if (token) {
             loadUserProfileData();
-        }
-        else{
+        } else {
             setUserData(false);
         }
-    },[token])
 
+    }, [token]);
 
     return (
         <AppContext.Provider value={value}>
             {props.children}
         </AppContext.Provider>
-    )
-}
+    );
+};
 
 export default AppContextProvider;

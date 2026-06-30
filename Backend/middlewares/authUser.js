@@ -1,22 +1,18 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 // User Authentication Middleware
-
 const authUser = async (req, res, next) => {
     try {
 
         // Get Authorization Header
         const authHeader = req.headers.authorization;
 
-        // Check if header exists
         if (!authHeader) {
             return res.status(401).json({
                 success: false,
                 message: "Authorization header missing"
             });
         }
-
-        // Authorization: Bearer TOKEN
 
         if (!authHeader.startsWith("Bearer ")) {
             return res.status(401).json({
@@ -27,7 +23,6 @@ const authUser = async (req, res, next) => {
 
         const token = authHeader.split(" ")[1];
 
-        // Check if token exists
         if (!token) {
             return res.status(401).json({
                 success: false,
@@ -35,30 +30,37 @@ const authUser = async (req, res, next) => {
             });
         }
 
-        // Verify Token
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Attach user id to request
-        req.userId = decoded.id
+        req.userId = decoded.id;
 
-        // Move to next middleware/controller
         next();
 
-    }
-    catch (err) {
+    } catch (err) {
 
-        console.log(err);
+        console.error("Auth Error:", err.message);
 
-        return res.status(401).json({
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({
+                success: false,
+                code: "TOKEN_EXPIRED",
+                message: "Session expired. Please login again."
+            });
+        }
+
+        if (err.name === "JsonWebTokenError") {
+            return res.status(401).json({
+                success: false,
+                code: "INVALID_TOKEN",
+                message: "Invalid token."
+            });
+        }
+
+        return res.status(500).json({
             success: false,
-            message: "Invalid or Expired Token"
+            message: "Authentication failed."
         });
     }
-}
+};
 
 export default authUser;
-
-

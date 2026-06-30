@@ -51,7 +51,8 @@ const registerUser = async (req, res) => {
         const user = await newUser.save();
 
         //token creation 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+    
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "1m" })
         res.json({
             success: true,
             token
@@ -88,7 +89,8 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "1m" })
+            // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
             res.json({ success: true, token });
         }
         else {
@@ -565,11 +567,12 @@ const googleLogin = async (req, res) => {
             });
         }
 
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
-        );
+        // const token = jwt.sign(
+        //     { id: user._id },
+        //     process.env.JWT_SECRET,
+        //     { expiresIn: "7d" }
+        // );
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,  { expiresIn: "1m" })
 
         return res.json({
             success: true,

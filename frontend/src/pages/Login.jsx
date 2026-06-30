@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
-  const { backendUrl, token, setToken } = useContext(AppContext);
+  const { backendUrl, token, setToken , userData} = useContext(AppContext);
   const navigate = useNavigate();
 
   const [state, setState] = useState("Sign Up");
@@ -86,10 +86,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (token) {
-      navigate("/");
+    if (userData) {
+        navigate("/");
     }
-  }, [token, navigate]);
+  }, [userData, navigate]);
 
   // Smooth full-screen state during redirect to prevent background page flashing
   if (isLoggingIn || token) {

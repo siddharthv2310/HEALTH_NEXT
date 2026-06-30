@@ -8,15 +8,14 @@ const Navbar = () => {
   const navigate = useNavigate()
 
   const [showMenu, setShowMenu] = useState(false)
-  const { token, setToken, userData } = useContext(AppContext)
+  const { token, userData ,  logoutUser } = useContext(AppContext)
   const [showDropdown, setShowDropdown] = useState(false)
 
   const logout = () => {
     setShowDropdown(false);
-    setToken(false)
-    localStorage.removeItem('token');
-    navigate('/');
-  }
+    logoutUser();
+    navigate("/");
+  };
 
   useEffect(() => {
     const handleResize = () => {

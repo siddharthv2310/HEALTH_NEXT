@@ -32,8 +32,13 @@ export const AppointmentProvider = ({ children }) => {
 
         } catch (error) {
 
-            console.log(error);
+            if (error.response?.status === 401) {
+                localStorage.removeItem("token");
+                window.location.reload();
+                return;
+            }
 
+            console.log(error);
         }
     };
 
