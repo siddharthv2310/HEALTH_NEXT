@@ -7,6 +7,10 @@ import { createAppointment } from "./appointmentServices.js";
 import { resolveDate } from "../utils/resolveDate.js";
 import { resolveTime } from "../utils/resolveTime.js";
 
+const isValidText = (value) => {
+    return typeof value === "string" && value.trim().length > 0;
+};
+
 const handleIntent = async (parsedResponse, userId) => {
     const { intent, doctorId, doctorName, speciality, date, time, timePeriod } = parsedResponse;
 
@@ -15,12 +19,21 @@ const handleIntent = async (parsedResponse, userId) => {
         case "view_doctor": {
 
 
-            const doctors = await doctorModel.find({
-                name: {
-                    $regex: doctorName,
-                    $options: "i"
-                }
-            });
+            if (!isValidText(doctorName)) {
+    return {
+        success: true,
+        aiResponse: {
+            reply: "Please tell me the doctor's name."
+        }
+    };
+}
+
+const doctors = await doctorModel.find({
+    name: {
+        $regex: doctorName.trim(),
+        $options: "i"
+    }
+});
 
 
             if (doctors.length === 0) {
@@ -76,9 +89,12 @@ const handleIntent = async (parsedResponse, userId) => {
 
             const query = {};
 
-            if (speciality) {
-                query.speciality = { $regex: speciality, $options: "i" };
-            }
+if (isValidText(speciality)) {
+    query.speciality = {
+        $regex: speciality.trim(),
+        $options: "i"
+    };
+}
 
             const doctorsList = await doctorModel.find(query);
 
@@ -147,12 +163,21 @@ const handleIntent = async (parsedResponse, userId) => {
                 };
             }
 
-            const doctors = await doctorModel.find({
-                name: {
-                    $regex: doctorName,
-                    $options: "i"
-                }
-            });
+            if (!isValidText(doctorName)) {
+    return {
+        success: true,
+        aiResponse: {
+            reply: "Which doctor would you like to book the appointment with?"
+        }
+    };
+}
+
+const doctors = await doctorModel.find({
+    name: {
+        $regex: doctorName.trim(),
+        $options: "i"
+    }
+});
 
             if (doctors.length === 0) {
                 return {
@@ -390,19 +415,17 @@ const handleIntent = async (parsedResponse, userId) => {
             const appointments = await appointmentModel.find({ userId, cancelled: false ,  payment: false });
             let filteredAppointments = appointments;
 
-            if (doctorName) {
+          if (isValidText(doctorName)) {
 
-                filteredAppointments = appointments.filter(
-                    app =>
-                        app.docData.name
-                            .toLowerCase()
-                            .includes(
-                                doctorName.toLowerCase()
-                            )
-                );
-
-
-            }
+    filteredAppointments = appointments.filter(
+        app =>
+            app.docData.name
+                .toLowerCase()
+                .includes(
+                    doctorName.trim().toLowerCase()
+                )
+    );
+}
 
             if (date) {
                 const resolvedDate = resolveDate(date);
@@ -426,7 +449,7 @@ const handleIntent = async (parsedResponse, userId) => {
                 success: true,
                 aiResponse: {
                     reply: "Which appointment would you like to cancel?",
-                    appointments: appointments.map(app => ({
+                   appointments: filteredAppointments.map(app => ({
                         id: app._id,
                         doctorName: app.docData.name,
                         slotDate: app.slotDate,
@@ -439,7 +462,18 @@ const handleIntent = async (parsedResponse, userId) => {
 
         case "symptom_consultation": {
 
-            const doctors = await doctorModel.find({ speciality: { $regex: speciality, $options: "i" } });
+            let doctors = [];
+
+if (isValidText(speciality)) {
+
+    doctors = await doctorModel.find({
+        speciality: {
+            $regex: speciality.trim(),
+            $options: "i"
+        }
+    });
+
+}
 
             return {
                 success: true,
@@ -459,9 +493,17 @@ const handleIntent = async (parsedResponse, userId) => {
 
         case "available_doctors": {
             let doctors;
-            if (speciality) {
-                doctors = await doctorModel.find({ speciality: { $regex: speciality, $options: "i" }, available: true })
-            }
+           if (isValidText(speciality)) {
+
+    doctors = await doctorModel.find({
+        speciality: {
+            $regex: speciality.trim(),
+            $options: "i"
+        },
+        available: true
+    });
+
+}
             else {
                 doctors = await doctorModel.find({ available: true });
             }
@@ -486,12 +528,21 @@ const handleIntent = async (parsedResponse, userId) => {
 
         case "check_availability": {
 
-            const doctor = await doctorModel.findOne({
-                name: {
-                    $regex: doctorName,
-                    $options: "i"
-                }
-            });
+            if (!isValidText(doctorName)) {
+    return {
+        success: true,
+        aiResponse: {
+            reply: "Please tell me the doctor's name."
+        }
+    };
+}
+
+const doctor = await doctorModel.findOne({
+    name: {
+        $regex: doctorName.trim(),
+        $options: "i"
+    }
+});
 
             if (!doctor) {
                 return {
