@@ -19,6 +19,8 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_BACKEND_URL: ""
+        VITE_GOOGLE_CLIENT_ID: "208574629204-r4a3afcuqepfuupcj81qn829auvilnn8.apps.googleusercontent.com"
+        VITE_RAZORPAY_KEY_ID: "rzp_test_SwAd8QHJDAtPKJ"
     container_name: health-next-frontend
     ports:
       - "80:80"
