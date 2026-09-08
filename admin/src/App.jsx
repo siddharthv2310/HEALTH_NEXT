@@ -45,8 +45,10 @@ const App = () => {
     '/doctor-appointment',
     '/doctor-profile'
   ];
+  
+  const routePath = location.pathname.replace(/^\/admin(?=\/|$)/, '');
 
-  const isValidRoute = validRoutes.includes(location.pathname);
+  const isValidRoute = validRoutes.includes(routePath);
 
   const isAuthPage =
     location.pathname === '/admin-login' ||
